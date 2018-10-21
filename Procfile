@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: gunicorn "smartpalette:create_app()"
