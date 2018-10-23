@@ -20,7 +20,6 @@ def create_app():
     # a simple page that says hello
     @app.route('/hello')
     def hello():
-        db.create_all()
         return render_template('hello_template.html')
 
     return app
