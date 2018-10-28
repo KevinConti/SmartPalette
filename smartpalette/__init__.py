@@ -2,10 +2,15 @@ import os
 
 from flask import Flask, render_template
 
+
 #Note: Use FLASK_ENV=Development for local dev (with local postgres)
-def create_app():
+def create_app(env=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    # If an environment was manually requested, set to that environment regardless of cli request
+    # Mostly used for pytest
+    if env:
+        app.env = env
     app = configure_app(app)
     # init database
     from smartpalette.models.models import db
@@ -37,6 +42,10 @@ def configure_app(app):
         print("loaded local_database to app")
     elif (app.env == "production"):
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    elif (app.env == "testing"):
+        print("Setting up connection to 'test_local_database'")
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:password@localhost:5432/test_local_database'
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     else:
         print("Warning: Application is not runnign in either development or production mode")
