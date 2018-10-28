@@ -2,7 +2,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-
 class User(db.Model):
     username = db.Column(db.String(), primary_key=True)
     password = db.Column(db.String())  # TODO: Make this encrypted
@@ -34,7 +33,7 @@ class Palette(db.Model):
                              backref=db.backref('palettes', lazy=True))
 
     def __repr__(self):
-        return '<paletteId: []>'.format(self.paletteId)
+        return '<paletteId: {}>'.format(self.paletteId)
 
 
 class Color(db.Model):

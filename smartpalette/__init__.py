@@ -1,14 +1,20 @@
 import os
 
 from flask import Flask, render_template
+from smartpalette.models.models import db
+from smartpalette.routes.routes import blue_print
 
-#Note: Use FLASK_ENV=Development for local dev (with local postgres)
+username = os.environ['PGUSER']
+password = os.environ['PGPASSWORD']
+
+#Note: Use FLASK_ENV=development for local dev (with local postgres)
 def create_app():
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app = configure_app(app)
+    app.register_blueprint(blue_print)
     # init database
-    from smartpalette.models.models import db
+    
     db.init_app(app)
 
     # ensure the instance folder exists
@@ -32,14 +38,19 @@ def configure_app(app):
     # If "Development" then will attempt to find a local postgresql DB
     # Else will attempt to connect to prod
     if (app.env == "development"):
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:password@localhost:5432/local_database'
+        """
+        For the user name and password, set environmental variables
+        PGUSER = postgres
+        PGPASSWORD = your password that you set for the postgres installation
+        """
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/mylocaldb'.format(username, password)
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
         print("loaded local_database to app")
     elif (app.env == "production"):
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     else:
-        print("Warning: Application is not runnign in either development or production mode")
+        print("Warning: Application is not running in either development or production mode")
         print("Defaulting to development mode")
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://localhost/local_database'
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

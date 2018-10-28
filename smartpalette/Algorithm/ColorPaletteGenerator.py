@@ -9,9 +9,7 @@ class PaletteGenerator:
 
     @staticmethod
     def create_palette(image, num_of_colors):
-
         pixel_list = list(Image.open(image, 'r').getdata())
-
         x_list = []
         y_list = []
         z_list = []
@@ -31,9 +29,8 @@ class PaletteGenerator:
 
         change = 1
         while change > 0.00001:
-            
             catlist = PaletteGenerator.categorize(x_list, y_list, z_list, x_means, y_means, z_means)
-
+            
             x_means, y_means, z_means, change = PaletteGenerator.refine_mean(
                 num_of_colors, catlist, x_list, y_list, z_list, x_means, y_means, z_means
             )
@@ -46,7 +43,6 @@ class PaletteGenerator:
 
             num_of_colors = new_len
 
-
         color_list = []
         for i in range(len(x_means)):
             r, g, b = x_means[i], y_means[i], z_means[i]
@@ -56,10 +52,7 @@ class PaletteGenerator:
 
     @staticmethod
     def categorize(x, y, z, xmeans, ymeans, zmeans):
-
-
         catlist = []
-
         category = 0
 
         for i in range(len(x)):
@@ -82,23 +75,14 @@ class PaletteGenerator:
         return catlist
 
     @staticmethod
-
-
     def eliminateNoneVals(element_list):
-
-
         for item in element_list:
-
             if item == None:
-
                 element_list.remove(item)
-
         return element_list
 
-
+    @staticmethod
     def refine_mean(palette_num, catlist, xlist, ylist, zlist, xmeans, ymeans, zmeans):
-
-
         newxmeans = []
         newymeans = []
         newzmeans = []
@@ -138,7 +122,6 @@ class PaletteGenerator:
                 newxmeans.append(None)
                 newymeans.append(None)
                 newzmeans.append(None)
-
         return newxmeans, newymeans, newzmeans, change
 
 
@@ -151,20 +134,15 @@ def main():
         palette_num = None
 
         while palette_num is None:
-
             try:
                 palette_num = int(input("How many colors would you like on the palette? "))
             except:
                 print("Value is not an integer")
 
         if palette_num < 2:
-
             print("A palette must have at least 2 colors")
-
         else:
-
             break
-
 
     color_list = a.create_palette(user_image, palette_num)
     print(color_list)
