@@ -2,11 +2,15 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-
 class User(db.Model):
     username = db.Column(db.String(), primary_key=True)
     password = db.Column(db.String())  # TODO: Make this encrypted
-    images = db.relationship('Image', backref='user', lazy=True)
+    #images = db.relationship('Image', backref='user', lazy=True)
+
+    def __init__(self, username, password=None, images=None):
+        self.username = username
+        self.password = password
+        #self.images = images
 
     def __repr__(self):
         return '<user: {}>'.format(self.username)
@@ -45,5 +49,3 @@ class Color(db.Model):
 
     def __repr__(self):
         return '<Hex value: {}>'.format(self.hex)
-
-
