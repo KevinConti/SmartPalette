@@ -26,6 +26,7 @@ def create_app():
     #     jacob = User('jacob', 'password', None)
     #     db.session.add(jacob)
     #     db.session.commit()
+    #test
 
     # ensure the instance folder exists
     try:
