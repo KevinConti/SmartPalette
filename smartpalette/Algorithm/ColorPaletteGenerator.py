@@ -129,20 +129,7 @@ def main():
     a = PaletteGenerator()
     user_image = input("Enter the file name: ")
 
-    while True:
-
-        palette_num = None
-
-        while palette_num is None:
-            try:
-                palette_num = int(input("How many colors would you like on the palette? "))
-            except:
-                print("Value is not an integer")
-
-        if palette_num < 2:
-            print("A palette must have at least 2 colors")
-        else:
-            break
+    palette_num = int(input("How many colors would you like on the palette? "))
 
     color_list = a.create_palette(user_image, palette_num)
     print(color_list)

@@ -11,6 +11,10 @@ password = os.environ['PGPASSWORD']
 def create_app():
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    # If an environment was manually requested, set to that environment regardless of cli request
+    # Mostly used for pytest
+    if env:
+        app.env = env
     app = configure_app(app)
     app.register_blueprint(blue_print)
     # init database
@@ -48,6 +52,10 @@ def configure_app(app):
         print("loaded local_database to app")
     elif (app.env == "production"):
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    elif (app.env == "testing"):
+        print("Setting up connection to 'test_local_database'")
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:password@localhost:5432/test_local_database'
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     else:
         print("Warning: Application is not running in either development or production mode")

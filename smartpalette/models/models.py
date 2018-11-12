@@ -10,6 +10,10 @@ class User(db.Model):
     def __repr__(self):
         return '<user: {}>'.format(self.username)
 
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
 
 class Image(db.Model):
     filepath = db.Column(db.String(), primary_key=True)
