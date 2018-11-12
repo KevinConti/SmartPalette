@@ -26,19 +26,18 @@
     <img src="../static/imgs/login-image.svg" id="login-button" data-toggle="modal" data-target="#createAccountModal">
     <div class="container">
         <img class="img-fluid mb-5 d-block mx-auto" src="../static/imgs/Logo.png" alt="logo">
-            <hr class="star-light">
-            <div class="box">
-                <h2>Create your custom palettes with the click of a button.</h2>
-                <p>Its easy! Upload your image, select how many colors your would like to generate,
-                and boom.  <br>
-                    Be sure to create an account to share and view others creations.</p>
-                <div class = "button" data-toggle="modal" data-target="#uploadModal">Upload Image</div>
+        <hr class="star-light">
+        <div class="box">
+            <h2>Create your custom palettes with the click of a button.</h2>
+            <p>Its easy! Upload your image, select how many colors your would like to generate,
+                and boom. <br>
+                Be sure to create an account to share and view others creations.</p>
+            <div class="button" data-toggle="modal" data-target="#uploadModal">Upload Image</div>
 
-                <div class = "button" data-toggle="modal" data-target="#showExample">View Example</div>
-                <br>
-
-            </div>
-            <hr class="star-light">
+            <div class="button" data-toggle="modal" data-target="#showExample">View Example</div>
+            <br>
+        </div>
+        <hr class="star-light">
     </div>
 </header>
 <!-- End header -->
@@ -55,28 +54,30 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                        <div class="col-sm-6">
-                            <img id="output"/>
+                    <div class="col-sm-6" id="left-column">
+                        <div id="image-output"><img id="output"/></div>
+                    </div>
+
+                    <div class="col-sm-6" id="right-column">
+                        <label class="upload-button fade-out" for="upload-photo">Browse...</label>
+                        <input class="fade-out" id="upload-photo" type="file" name="pic" accept="image/*"
+                               onchange="readFile()">
+                        <h1 class="fade-out">How many colors would you like to generate?</h1>
+                        <p class="fade-out">*Number may be reduced due to image content</p>
+                        <div class="form-group fade-out">
+                            <select class="form-control" id="paletteNumberSelect">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option>6</option>
+                                <option>7</option>
+                                <option>8</option>
+                                <option>9</option>
+                            </select>
                         </div>
-                        <div class="col-sm-6">
-                            <label class="upload-button" for="upload-photo">Browse...</label>
-                            <input id="upload-photo" type="file" name="pic" accept="image/*" onchange="readFile()">
-                            <h1>How many colors would you like to generate?</h1>
-                            <p>*Number may be reduced due to image content</p>
-                            <div class="form-group">
-                                <select class="form-control" id="paletteNumberSelect">
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                    <option>6</option>
-                                    <option>7</option>
-                                    <option>8</option>
-                                    <option>9</option>
-                                </select>
-                            </div>
-                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -86,6 +87,7 @@
     </div>
 </div>
 <!-- End upload image modal -->
+
 
 <!-- Create account modal-->
 <div id="createAccountModal" class="modal fade" role="dialog">
@@ -97,16 +99,20 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body text-center">
-                <img src="../static/imgs/login-image.svg" style="height: 125px; width: auto; text-align:center; margin-bottom: 20px;">
+                <img src="../static/imgs/login-image.svg"
+                     style="height: 125px; width: auto; text-align:center; margin-bottom: 20px;">
                 <form>
                     <div class="input-group">
-                        <input id="new_username" type="text" class="form-control" name="username" placeholder="Username">
+                        <input id="new_username" type="text" class="form-control" name="username"
+                               placeholder="Username">
                     </div>
                     <div class="input-group">
-                        <input id="new_password" type="password" class="form-control" name="password" placeholder="Password">
+                        <input id="new_password" type="password" class="form-control" name="password"
+                               placeholder="Password">
                     </div>
                 </form>
-                <p style="text-decoration: underline;" data-toggle="modal" data-target="#loginModal" onclick="$('#createAccountModal').modal('hide');">Already have an account?</p>
+                <p style="text-decoration: underline;" data-toggle="modal" data-target="#loginModal"
+                   onclick="$('#createAccountModal').modal('hide');">Already have an account?</p>
             </div>
             <div class="modal-footer">
                 <div class="upload-button" id="create-account">Accept</div>
@@ -126,16 +132,19 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body text-center">
-                <img src="../static/imgs/login-image.svg" style="height: 125px; width: auto; text-align:center; margin-bottom: 20px;">
+                <img src="../static/imgs/login-image.svg"
+                     style="height: 125px; width: auto; text-align:center; margin-bottom: 20px;">
                 <form>
                     <div class="input-group">
                         <input id="usename" type="text" class="form-control" name="username" placeholder="Username">
                     </div>
                     <div class="input-group">
-                        <input id="password" type="password" class="form-control" name="password" placeholder="Password">
+                        <input id="password" type="password" class="form-control" name="password"
+                               placeholder="Password">
                     </div>
                 </form>
-                <p style="text-decoration: underline;" data-toggle="modal" data-target="#createAccountModal" onclick="$('#loginModal').modal('hide');">Need to create an account?</p>
+                <p style="text-decoration: underline;" data-toggle="modal" data-target="#createAccountModal"
+                   onclick="$('#loginModal').modal('hide');">Need to create an account?</p>
             </div>
             <div class="modal-footer">
                 <div class="upload-button" id="login-account">Continue</div>
@@ -146,6 +155,7 @@
 <!-- End create account modal -->
 
 <!-- Show example modal-->
+<!-- Could add slide show?-->
 <div id="showExample" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <!-- Modal content-->
@@ -155,10 +165,13 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body text-center">
-                <img src="../static/imgs/RainbowPalette.png" style="height: auto; width: 450px; text-align:center; margin-bottom: 20px;">
+                <img src="../static/imgs/RainbowPalette.png"
+                     style="height: auto; width: 450px; text-align:center; margin-bottom: 20px;">
             </div>
             <div class="modal-footer">
-                <div class="upload-button" data-toggle="modal" data-target="#uploadModal" onclick="$('#showExample').modal('hide')">Try Yourself</div>
+                <div class="upload-button" data-toggle="modal" data-target="#uploadModal"
+                     onclick="$('#showExample').modal('hide')">Try Yourself
+                </div>
             </div>
         </div>
     </div>
