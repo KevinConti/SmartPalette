@@ -48,5 +48,3 @@ class Color(db.Model):
 
     def __repr__(self):
         return '<Hex value: {}>'.format(self.hex)
-
-

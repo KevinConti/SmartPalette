@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, render_template
-from smartpalette.models.models import db
+from smartpalette.models.models import db, User
 from smartpalette.routes.routes import blue_print
 
 username = os.environ['PGUSER']
@@ -13,8 +13,8 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     # If an environment was manually requested, set to that environment regardless of cli request
     # Mostly used for pytest
-    if env:
-        app.env = env
+    # if env:
+    #     app.env = env
     app = configure_app(app)
     app.register_blueprint(blue_print)
     # init database
@@ -47,8 +47,13 @@ def configure_app(app):
         PGUSER = postgres
         PGPASSWORD = your password that you set for the postgres installation
         """
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/mylocaldb'.format(username, password)
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/mylocaldb'.format(
+            username, 
+            password
+        )
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+        app.config['SECRET_KEY'] = "this_is_necessary_for_flash_message"
+        
         print("loaded local_database to app")
     elif (app.env == "production"):
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
