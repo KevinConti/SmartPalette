@@ -24,10 +24,11 @@ class Image(db.Model):
         return '<image located at: {}>'.format(self.filepath)
 
 
-palette_colors = db.Table('palette_colors',
-                          db.Column('paletteId', db.Integer, db.ForeignKey('palette.paletteId'), primary_key=True),
-                          db.Column('hex', db.String(), db.ForeignKey('color.hex'), primary_key=True)
-                          )
+    palette_colors = db.Table(
+        'palette_colors',
+        db.Column('paletteId', db.Integer, db.ForeignKey('palette.paletteId'), primary_key=True),
+        db.Column('hex', db.String(), db.ForeignKey('color.hex'), primary_key=True)
+    )
 
 
 class Palette(db.Model):

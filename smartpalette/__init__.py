@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template
 from smartpalette.models.models import db, User
-from smartpalette.routes.routes import blue_print
+from smartpalette.routes.routes import blue_print, UPLOAD_FOLDER
 
 username = os.environ['PGUSER']
 password = os.environ['PGPASSWORD']
@@ -53,6 +53,7 @@ def configure_app(app):
         )
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
         app.config['SECRET_KEY'] = "this_is_necessary_for_flash_message"
+        app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
         
         print("loaded local_database to app")
     elif (app.env == "production"):
