@@ -23,7 +23,6 @@ class Image(db.Model):
     def __repr__(self):
         return '<image located at: {}>'.format(self.filepath)
 
-
     palette_colors = db.Table(
         'palette_colors',
         db.Column('paletteId', db.Integer, db.ForeignKey('palette.paletteId'), primary_key=True),
@@ -34,7 +33,7 @@ class Image(db.Model):
 class Palette(db.Model):
     paletteId = db.Column(db.Integer, autoincrement=True, primary_key=True)
     image = db.relationship('Image', backref='image', uselist=False)
-    colors = db.relationship('Color', secondary=palette_colors, lazy='subquery',
+    colors = db.relationship('Color', secondary=Image.palette_colors, lazy='subquery',
                              backref=db.backref('palettes', lazy=True))
 
     def __repr__(self):
