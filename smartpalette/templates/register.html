@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <!-- Required meta tags -->
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+   <title>Login</title>
+
+   <!-- Bootstrap files -->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+   <script src="../static/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+   <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+   <!-- Custom CSS and JS -->
+   <script src="../static/js/script.js"></script>
+   <link rel="stylesheet" href="../static/css/styles.css">
+
+</head>
+   <body>
+      <div class="form-container" style="display:flex;justify-content:center;align-items:center; margin-top: 10%;">
+         <div class="box">
+         <!-- content-->
+         <div class="content">
+            <h4 class="form-title">Create Account</h4>
+            <hr class="star-light">
+            <div class="text-center">
+               <img src="../static/imgs/login-image.svg" style="height: 125px; width: auto; text-align:center; margin-bottom: 20px;"><br>
+
+               {%- for category, message in get_flashed_messages(with_categories = true) %}
+               {{ message }}
+               {%- endfor %}
+
+               <form method = "POST">
+                  <label for = "username">Username</label><br>
+                  <input type = "text" name="username"><br>
+                  <label for = "password">Password</label><br>
+                  <input type = "text" name="password"><br><br>
+                  <hr class="star-light">
+                  <input type = "submit" value = "Submit"><br>
+               </form>
+            </div>
+         </div>
+      </div>
+      </div>
+   </body>
+</html>

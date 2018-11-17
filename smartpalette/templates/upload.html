@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <title>Upload</title>
+
+    <!-- Bootstrap files -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../static/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <!-- Custom CSS and JS -->
+    <script src="../static/js/script.js"></script>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+
+    <div class="form-container" style="display:flex;justify-content:center;align-items:center; margin-top: 10%;">
+        <div class="box">
+            <!-- content-->
+            <div class="content">
+                <h4 class="form-title">Upload Image</h4>
+                <hr class="star-light">
+                <div class="text-center">
+
+                    {%- for category, message in get_flashed_messages(with_categories = true) %}
+                    {{ message }}
+                    {%- endfor %}
+                    <br>
+                <img id="output"/>
+
+                <form method=post enctype=multipart/form-data>
+                    <label for=color_num>How many colors would you like?</label><br>
+                    <input type=text name=color_num><br><br>
+                    <!-- Added readFile to display image as a preview client-side-->
+                    <input type=file name=file onchange="readFile()">
+                    <hr class="star-light">
+                    <input type=submit value=Upload>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </body>
+
+</html>
