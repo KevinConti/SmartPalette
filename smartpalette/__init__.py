@@ -21,17 +21,18 @@ def create_app(env=None):
 
     db.init_app(app)
 
-    # USE THIS BLOCK TO CREATE A LOCAL DATABASE THAT MAPS TO MODELS
-    # with app.app_context():
-    #     db.init_app(app)
-    #
-    #     db.create_all()
-    #     db.session.commit()
-    #
-    #     jacob = User('jacob', 'password', None)
-    #     db.session.add(jacob)
-    #     db.session.commit()
-    #test
+    #USE THIS BLOCK TO CREATE A LOCAL DATABASE THAT MAPS TO MODELS
+    with app.app_context():
+        db.init_app(app)
+
+        db.create_all()
+        db.session.commit()
+
+        jacob = User('jacob', 'password')
+        db.session.add(jacob)
+        db.session.delete(jacob)
+        db.session.commit()
+
 
     # ensure the instance folder exists
     try:
