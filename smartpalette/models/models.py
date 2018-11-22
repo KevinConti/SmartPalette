@@ -1,10 +1,13 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+from smartpalette import app
 
 db = SQLAlchemy()
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     username = db.Column(db.String(), primary_key=True)
-    password = db.Column(db.String())  # TODO: Make this encrypted
+    password = db.Column(db.String(120))  # TODO: Make this encrypted
     images = db.relationship('Image', backref='user', lazy=True)
 
     def __repr__(self):
@@ -12,8 +15,16 @@ class User(db.Model):
 
     def __init__(self, username, password):
         self.username = username
-        self.password = password
+        self.set_password(password)
 
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def get_id(self):
+        return self.username
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
 class Image(db.Model):
     filepath = db.Column(db.String(), primary_key=True)

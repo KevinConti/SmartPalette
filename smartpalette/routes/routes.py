@@ -1,8 +1,10 @@
-from flask import Flask, jsonify, render_template, Blueprint
+from flask import Flask, render_template, Blueprint
 from flask import request, flash, redirect, url_for, send_from_directory
+from flask_login import current_user, login_user
 from flask import current_app as app
 from smartpalette.models.models import db, User
 from werkzeug.utils import secure_filename
+
 import requests
 import json
 import os
@@ -58,6 +60,22 @@ def register():
                 )
             )
     return render_template('register.html')
+
+@blue_print.route('/login/', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('hello'))
+    if request.method == 'POST':
+        if not request.form.get('username') or not request.form.get('password'):
+            flash("Error: Please enter your username and password")
+        else:
+            user = User.query.filter_by(username=request.form['username']).first()
+            if user is None or not user.check_password(request.form['password']):
+                flash('Invalid username or password')
+                return redirect(url_for('blue_print.login'))
+            login_user(user)
+            return redirect(url_for('hello'))
+    return render_template('login.html')
 
 @blue_print.route('/upload/', methods=['GET', 'POST'])
 def upload():
