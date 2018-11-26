@@ -48,7 +48,7 @@ def create_image():
 @blue_print.route('/register/', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('hello'))
+        return redirect(url_for('index'))
     if request.method == "POST":
         if not request.form['username'] or not request.form['password']:
             flash("Please enter all the fields", 'error')
@@ -69,7 +69,7 @@ def register():
 @blue_print.route('/login/', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('hello'))
+        return redirect(url_for('index'))
     if request.method == 'POST':
         if not request.form.get('username') or not request.form.get('password'):
             flash("Error: Please enter your username and password")
@@ -79,14 +79,14 @@ def login():
                 flash('Invalid username or password')
                 return redirect(url_for('blue_print.login'))
             login_user(user)
-            return redirect(url_for('hello'))
+            return redirect(url_for('index'))
     return render_template('login.html')
 
 @blue_print.route('/logout/')
 def logout():
     if current_user.is_authenticated:
         logout_user()
-        return redirect(url_for('hello'))
+        return redirect(url_for('index'))
     else:
         return redirect(url_for('blue_print.login'))
 

@@ -31,9 +31,9 @@ def create_app():
         return User.query.get(username)
 
     # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return render_template('hello_template.html')
+    @app.route('/')
+    def index():
+        return render_template('index.html')
 
     return app
 
@@ -45,6 +45,7 @@ def configure_app(app):
     # If "Development" then will attempt to find a local postgresql DB
     # Else will attempt to connect to prod
     app.config['SECRET_KEY'] = "abcitseasyas123"
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     if (app.env == "development"):
         """
         For the user name and password, set environmental variables
@@ -58,8 +59,6 @@ def configure_app(app):
             password
         )
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-        app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-        
         print("loaded local_database to app")
     elif (app.env == "production"):
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
