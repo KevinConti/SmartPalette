@@ -44,7 +44,7 @@ def configure_app(app):
     # Connects to the appropriate database according to the DB_CONN variable
     # If "Development" then will attempt to find a local postgresql DB
     # Else will attempt to connect to prod
-    app.config['SECRET_KEY'] = "this_is_necessary_for_flash_message"
+    app.config['SECRET_KEY'] = "abcitseasyas123"
     if (app.env == "development"):
         """
         For the user name and password, set environmental variables

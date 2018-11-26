@@ -1,8 +1,9 @@
 from flask import Flask, render_template, Blueprint
 from flask import request, flash, redirect, url_for, send_from_directory
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, logout_user
 from flask import current_app as app
-from smartpalette.models.models import db, User
+from smartpalette.models.models import db, User, Palette, Color
+from smartpalette.Algorithm.ColorPaletteGenerator import PaletteGenerator
 from werkzeug.utils import secure_filename
 
 import requests
@@ -15,6 +16,8 @@ blue_print = Blueprint('blue_print', __name__, template_folder='templates')
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'tif'])
 UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
+
+GENERATOR = PaletteGenerator()
 
 def allowed_file(filename):
     return '.' in filename \
@@ -44,6 +47,8 @@ def create_image():
 
 @blue_print.route('/register/', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('hello'))
     if request.method == "POST":
         if not request.form['username'] or not request.form['password']:
             flash("Please enter all the fields", 'error')
@@ -77,12 +82,23 @@ def login():
             return redirect(url_for('hello'))
     return render_template('login.html')
 
+@blue_print.route('/logout/')
+def logout():
+    if current_user.is_authenticated:
+        logout_user()
+        return redirect(url_for('hello'))
+    else:
+        return redirect(url_for('blue_print.login'))
+
 @blue_print.route('/upload/', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
         image = request.files.get('file')
+
+        #Error handling needs to exist for num_of_colors
+        num_of_colors = int(request.form.get('color_num'))
         if image == None:
-            flash('No selected file')
+            flash('Invalid input. Please upload a proper image type and number of colors.')
         elif image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
             image.save(
@@ -91,6 +107,8 @@ def upload():
                     filename
                 )
             )
+            color_list = GENERATOR.create_palette(image, num_of_colors)
+            print(color_list) # this works, now I just need to create a image for the db + colors
             return redirect(url_for(
                     'blue_print.display',
                     filename=filename
