@@ -15,7 +15,7 @@ URL = "https://smartpalette.herokuapp.com"
 blue_print = Blueprint('blue_print', __name__, template_folder='templates')
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'tif'])
-UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "..", "/uploads"))
+UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
 
 GENERATOR = PaletteGenerator()
 
