@@ -9,7 +9,7 @@ import requests
 import json
 import os
 
-URL = "http://localhost:5000"
+URL = "https://smartpalette.herokuapp.com"
 
 blue_print = Blueprint('blue_print', __name__, template_folder='templates')
 
