@@ -10,12 +10,18 @@ import requests
 import json
 import os
 
-URL = "https://smartpalette.herokuapp.com"
+mode = "prod"
+
+if mode == "development":
+    URL = "http://localhost:5000"
+    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
+else:
+    URL = "https://smartpalette.herokuapp.com"
+    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
 
 blue_print = Blueprint('blue_print', __name__, template_folder='templates')
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'tif'])
-UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
 
 GENERATOR = PaletteGenerator()
 
