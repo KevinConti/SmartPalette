@@ -7,9 +7,6 @@ from flask_login import LoginManager
 
 login = None
 
-username = os.environ['PGUSER']
-password = os.environ['PGPASSWORD']
-
 #Note: Use FLASK_ENV=development for local dev (with local postgres)
 def create_app():
     # create and configure the app
@@ -53,6 +50,8 @@ def configure_app(app):
         PGUSER = postgres
         PGPASSWORD = your password that you set for the postgres installation
         """
+        username = os.environ['PGUSER']
+        password = os.environ['PGPASSWORD']
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/mylocaldb'.format(
             username, 
             password
