@@ -7,7 +7,7 @@ db = SQLAlchemy()
 
 class User(UserMixin, db.Model):
     username = db.Column(db.String(), primary_key=True)
-    password = db.Column(db.String(120))  # TODO: Make this encrypted
+    password = db.Column(db.String(120))
     images = db.relationship('Image', backref='user', lazy=True)
 
     def __repr__(self):

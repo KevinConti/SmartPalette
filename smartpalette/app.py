@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template
 from smartpalette.models.models import db, User
 from smartpalette.routes.routes import blue_print, UPLOAD_FOLDER
+from smartpalette.routes.api import api
 from flask_login import LoginManager
 
 login = None
@@ -17,6 +18,7 @@ def create_app():
     #     app.env = env
     app = configure_app(app)
     app.register_blueprint(blue_print)
+    app.register_blueprint(api)
     db.init_app(app)
     login = LoginManager(app)
 

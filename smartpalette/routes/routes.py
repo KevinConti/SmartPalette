@@ -1,18 +1,20 @@
+from smartpalette.Algorithm.ColorPaletteGenerator import PaletteGenerator
+from smartpalette.routes.api import API_URL
+from smartpalette.models.models import User
 from flask import Flask, render_template, Blueprint
 from flask import request, flash, redirect, url_for, send_from_directory
 from flask_login import current_user, login_user, logout_user
 from flask import current_app as app
-from smartpalette.models.models import db, User, Palette, Color
-from smartpalette.Algorithm.ColorPaletteGenerator import PaletteGenerator
 from werkzeug.utils import secure_filename
 
 import requests
-import json
 import os
 
-mode = "prod"
+MODE = "development"
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'tif'])
+GENERATOR = PaletteGenerator()
 
-if mode == "development":
+if MODE == "development":
     URL = "http://localhost:5000"
     UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
 else:
@@ -21,35 +23,9 @@ else:
 
 blue_print = Blueprint('blue_print', __name__, template_folder='templates')
 
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'tif'])
-
-GENERATOR = PaletteGenerator()
-
 def allowed_file(filename):
     return '.' in filename \
         and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@blue_print.route('/users/<string:username>', methods=['GET'])
-def get_user(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    return render_template('user_profile.html', user=user)
-
-@blue_print.route('/users/', methods=['POST'])
-def create_user():
-    data = request.get_json()
-    new_user = User(data['username'], data['password'])
-    db.session.add(new_user)
-    db.session.commit()
-    return "Added user {}".format(data['username'])
-
-@blue_print.route('/images/<string:filename>')
-def get_image(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
-
-@blue_print.route('/images/', methods=['POST'])
-def create_image():
-    # TODO: Create an image in the context of a user
-    pass
 
 @blue_print.route('/register/', methods=['GET', 'POST'])
 def register():
@@ -63,14 +39,19 @@ def register():
             user_data['username'] = request.form['username']
             user_data['password'] = request.form['password']
 
-            r = requests.post(URL+"/users/", json=user_data)
+            r = requests.post(URL + "/users/", json=user_data)
 
             return redirect(url_for(
-                    'blue_print.get_user', 
+                    'blue_print.profile', 
                     username=request.form['username']
                 )
             )
     return render_template('register.html')
+
+@blue_print.route('/profile/<string:username>', methods=['GET'])
+def profile(username):
+    user = requests.get(URL + API_URL + "/users/{}".format(username)).json()
+    return render_template('profile.html') + user.get('username')
 
 @blue_print.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -84,8 +65,9 @@ def login():
             if user is None or not user.check_password(request.form['password']):
                 flash('Invalid username or password')
                 return redirect(url_for('blue_print.login'))
-            login_user(user)
-            return redirect(url_for('index'))
+            else:
+                login_user(user)
+                return redirect(url_for('index'))
     return render_template('login.html')
 
 @blue_print.route('/logout/')
@@ -126,5 +108,5 @@ def upload():
 
 @blue_print.route('/display/<string:filename>', methods=['GET'])
 def display(filename):
-    filename = URL + '/images/' + filename
+    filename = URL + API_URL + '/images/' + filename
     return render_template('display.html', filename=filename)
