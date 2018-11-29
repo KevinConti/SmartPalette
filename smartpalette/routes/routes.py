@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 import requests
 import os
 
-MODE = "development"
+MODE = "prod"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'tif'])
 GENERATOR = PaletteGenerator()
 

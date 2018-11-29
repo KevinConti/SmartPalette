@@ -4,7 +4,7 @@ import os
 
 api = Blueprint('api', __name__, template_folder='templates')
 API_URL = "/api/v1"
-MODE = "development"
+MODE = "prod"
 
 if MODE == "development":
     UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
