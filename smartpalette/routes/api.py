@@ -4,9 +4,9 @@ import os
 
 api = Blueprint('api', __name__, template_folder='templates')
 API_ENDPOINT = "/api/v1"
-MODE = "prod"
+MODE = "development"
 
-if MODE == "prod":
+if MODE == "development":
     UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
 else:
     UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
@@ -32,3 +32,16 @@ def get_image(filename):
 def create_image():
     # TODO: Create an image in the context of a user
     pass
+
+@api.route(API_ENDPOINT + '/colors/<string:hex>', methods=['GET'])
+def get_color(hex):
+    color = models.Color.query.filter_by(hex=hex).first_or_404()
+    return jsonify(hex=color.hex, rgb=[color.rValue, color.gValue, color.bValue])
+
+@api.route(API_ENDPOINT + '/colors/', methods=['POST'])
+def create_color():
+    data = request.get_json()
+    new_color = models.Color(data['r'], data['g'], data['b'])
+    models.db.session.add(new_color)
+    models.db.session.commit()
+    return "Added color {}{}{}".format(data['r'], data['g'], data['b'])
