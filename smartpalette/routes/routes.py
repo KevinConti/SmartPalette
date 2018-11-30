@@ -1,5 +1,5 @@
 from smartpalette.Algorithm.ColorPaletteGenerator import PaletteGenerator
-from smartpalette.routes.api import API_URL
+from smartpalette.routes.api import API_ENDPOINT
 from smartpalette.models.models import User
 from flask import Flask, render_template, Blueprint
 from flask import request, flash, redirect, url_for, send_from_directory
@@ -39,7 +39,7 @@ def register():
             user_data['username'] = request.form['username']
             user_data['password'] = request.form['password']
 
-            r = requests.post(URL + "/users/", json=user_data)
+            r = requests.post(URL + API_ENDPOINT + "/users/", json=user_data)
 
             return redirect(url_for(
                     'blue_print.profile', 
@@ -50,7 +50,7 @@ def register():
 
 @blue_print.route('/profile/<string:username>', methods=['GET'])
 def profile(username):
-    user = requests.get(URL + API_URL + "/users/{}".format(username)).json()
+    user = requests.get(URL + API_ENDPOINT + "/users/{}".format(username)).json()
     return render_template('profile.html') + user.get('username')
 
 @blue_print.route('/login/', methods=['GET', 'POST'])
@@ -108,5 +108,5 @@ def upload():
 
 @blue_print.route('/display/<string:filename>', methods=['GET'])
 def display(filename):
-    filename = URL + API_URL + '/images/' + filename
+    filename = URL + API_ENDPOINT + '/images/' + filename
     return render_template('display.html', filename=filename)
