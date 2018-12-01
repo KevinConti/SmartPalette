@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <h1>Upload Image</h1>
+
+    {%- for category, message in get_flashed_messages(with_categories = true) %}
+            {{ message }}
+      {%- endfor %}
+
+    <form method=post enctype=multipart/form-data>
+      <label for=color_num>Number of Colors to Generate</label><br>
+      <input type=text name=color_num><br>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+</html>
