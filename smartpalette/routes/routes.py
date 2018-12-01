@@ -17,7 +17,7 @@ GENERATOR = PaletteGenerator()
 
 if MODE == "development":
     URL = "http://localhost:5000"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
+    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
 else:
     URL = "https://smartpalette.herokuapp.com"
     UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
