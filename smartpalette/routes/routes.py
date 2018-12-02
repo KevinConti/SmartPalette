@@ -117,10 +117,7 @@ def display(filename):
 
 @blue_print.route('/browse')
 def browse():
-    # Setup connection to DB in order to manually write queries to comply with CSC 455 requirements
-    with app.app_context():
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    connection = engine.connect()
+    connection = setup_database_connection()
 
     # Query 1: Two-table join to find all palettes, along with the username of the user
     result = connection.execute('select * from palette INNER JOIN image i on palette."paletteId" = i."paletteId";');
@@ -144,16 +141,38 @@ def browse():
 # Primarily intended to meet user requirements for user: CSC 455
 @blue_print.route('/funfacts')
 def funfacts():
-    # Setup connection to DB in order to manually write queries to comply with CSC 455 requirements
-    with app.app_context():
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    connection = engine.connect()
+    connection = setup_database_connection()
 
-    # Query 3: Aggregate function
+    # Query 3: Aggregate function to find the total number of users who have signed up
     result = connection.execute('SELECT COUNT(*) from "user";');
+
+    # There will only be one row and one column, which will be the count of users, so grab that:
     for row in result:
         count = row[0]
 
-    connection.close()
-    return render_template('funfacts.html', numUsers=count)
+    # Query 4: Aggegrate function using GROUP BY and HAVING, which finds our 'power users' (> 5 palettes)
+    result = connection.execute('SELECT COUNT(i."paletteId") as "Number of Palettes", "user".username from "user" '
+                                'INNER JOIN image i on "user".username = i.username '
+                                'INNER JOIN palette p on i."paletteId" = p."paletteId" '
+                                'GROUP BY "user".username '
+                                'HAVING COUNT(i."paletteId") > 5;')
 
+    powerUsers = []
+    for row in result:
+        print("row:", row)
+        thisdict = {
+            "numPalettes": row[0],
+            "username": row[1]
+        }
+        powerUsers.append(thisdict)
+
+    connection.close()
+    return render_template('funfacts.html', numUsers=count, powerUsers=powerUsers)
+
+
+# Setup connection to DB in order to manually write queries to comply with CSC 455 requirements
+def setup_database_connection():
+    with app.app_context():
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    connection = engine.connect()
+    return connection
