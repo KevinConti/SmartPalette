@@ -7,6 +7,10 @@ from flask_login import current_user, login_user, logout_user
 from flask import current_app as app
 from werkzeug.utils import secure_filename
 
+# For requests to DB
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+
 import requests
 import os
 
@@ -110,3 +114,27 @@ def upload():
 def display(filename):
     filename = URL + API_ENDPOINT + '/images/' + filename
     return render_template('display.html', filename=filename)
+
+@blue_print.route('/browse')
+def browse():
+    engine = create_engine('postgres://postgres:password@localhost:5432/local_database')
+    """
+    db_session = scoped_session(sessionmaker(autocommit=False,
+                                             autoflush=False,
+                                             bind=engine))
+
+    """
+    connection = engine.connect()
+    result = connection.execute('select * from palette INNER JOIN image i on palette."paletteId" = i."paletteId";');
+    print("result: ", result)
+    rows = []
+    for row in result:
+        print("row:", row)
+        thisdict = {
+            "paletteId": row[0],
+            "filepath": row[1],
+            "username": row[2]
+        }
+        rows.append(thisdict)
+    connection.close()
+    return render_template('browse.html', rows=rows)

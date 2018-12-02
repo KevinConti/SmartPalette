@@ -54,8 +54,13 @@ def configure_app(app):
         PGUSER = postgres
         PGPASSWORD = your password that you set for the postgres installation
         """
-        username = os.environ['PGUSER']
-        password = os.environ['PGPASSWORD']
+        try:
+            username = os.environ['PGUSER']
+            password = os.environ['PGPASSWORD']
+        except KeyError:
+            # Tries to use defaults if environment variables aren't set.
+            username = 'postgres'
+            password = 'password'
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/mylocaldb'.format(
             username, 
             password
