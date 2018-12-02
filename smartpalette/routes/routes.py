@@ -117,14 +117,12 @@ def display(filename):
 
 @blue_print.route('/browse')
 def browse():
-    engine = create_engine('postgres://postgres:password@localhost:5432/local_database')
-    """
-    db_session = scoped_session(sessionmaker(autocommit=False,
-                                             autoflush=False,
-                                             bind=engine))
-
-    """
+    # Setup connection to DB in order to manually write queries to comply with CSC 455 requirements
+    with app.app_context():
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
     connection = engine.connect()
+
+    # Query 1: Two-table join
     result = connection.execute('select * from palette INNER JOIN image i on palette."paletteId" = i."paletteId";');
     print("result: ", result)
     rows = []
@@ -136,5 +134,9 @@ def browse():
             "username": row[2]
         }
         rows.append(thisdict)
+
+    # TODO: Query 2: Three-table join (color, color-palette, palette)
+
+
     connection.close()
     return render_template('browse.html', rows=rows)
