@@ -26,21 +26,30 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" style="text-decoration: underline;" href="#">Home</a>
+                    <form action=" " method="post">
+                        <button class="nav-button" style="border-bottom: 3px solid #fff;" href="#">Home</button>
+                    </form>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger uploadButton" href="#">Upload</a>
+                     <form action="/upload" method="post">
+                        <button class="nav-button" href="#">Upload</button>
+                     </form>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#">Gallery</a>
+                    <form action="#" method="post">
+                        <button class="nav-button" href="#">Gallery</button>
+                    </form>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#">Login</a>
+                    <form action="/login" method="post">
+                        <button class="nav-button" href="#">Login</button>
+                    </form>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+<!-- End Navigation -->
 
 <!-- Content -->
 <div class="main-content">
@@ -52,9 +61,11 @@
             <p>Its easy! Upload your image, select how many colors your would like to generate,
                 and boom.  <br>
                 Be sure to create an account to share and view others creations.</p>
+
             <br>
-            <br>
-            <button class="button uploadButton" style="cursor: pointer;">Upload Image</button>
+            <form action="/upload" method="post">
+                 <button class="button uploadButton" style="cursor: pointer;">Upload Image</button>
+            </form>
             <button class="button" data-toggle="modal" data-target="#showExample">View Example</button>
             <br>
         </div>
@@ -83,7 +94,9 @@
             </div>
             <div class="modal-body text-center">
                 <img class="img-fluid mb-5 d-block mx-auto" src="../static/imgs/RainbowPalette.png" style="height: auto; width: 450px; text-align:center; margin-bottom: 20px;">
-                <div class="button"  style="cursor: pointer;  text-align:center;">Try Yourself</div>
+                <form action="/upload" method="post">
+                    <button class="button"  style="cursor: pointer;  text-align:center; color:#000">Try Yourself</button>
+                </form>
             </div>
         </div>
     </div>
