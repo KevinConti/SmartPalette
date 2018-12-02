@@ -122,7 +122,7 @@ def browse():
         engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
     connection = engine.connect()
 
-    # Query 1: Two-table join
+    # Query 1: Two-table join to find all palettes, along with the username of the user
     result = connection.execute('select * from palette INNER JOIN image i on palette."paletteId" = i."paletteId";');
     print("result: ", result)
     rows = []
@@ -137,6 +137,23 @@ def browse():
 
     # TODO: Query 2: Three-table join (color, color-palette, palette)
 
-
     connection.close()
     return render_template('browse.html', rows=rows)
+
+# This route displays various 'fun facts' about the website, such as the number of users and such
+# Primarily intended to meet user requirements for user: CSC 455
+@blue_print.route('/funfacts')
+def funfacts():
+    # Setup connection to DB in order to manually write queries to comply with CSC 455 requirements
+    with app.app_context():
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    connection = engine.connect()
+
+    # Query 3: Aggregate function
+    result = connection.execute('SELECT COUNT(*) from "user";');
+    for row in result:
+        count = row[0]
+
+    connection.close()
+    return render_template('funfacts.html', numUsers=count)
+
