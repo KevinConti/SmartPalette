@@ -8,6 +8,10 @@ from flask import current_app as app
 from werkzeug.utils import secure_filename
 from uuid import uuid4
 
+# For requests to DB
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import scoped_session, sessionmaker
+
 import requests
 import os
 
@@ -146,3 +150,74 @@ def display(filename):
     except UnboundLocalError:
         abort(404)
     return render_template('display.html', filename=image, color_list=colors)
+
+@blue_print.route('/browse')
+def browse():
+    connection = setup_database_connection()
+
+    # Query 1: Two-table join to find all palettes, along with the username of the user
+    result = connection.execute('select * from palette INNER JOIN image i on palette."paletteId" = i."paletteId";');
+    print("result: ", result)
+    rows = []
+    for row in result:
+        print("row:", row)
+        thisdict = {
+            "paletteId": row[0],
+            "filepath": row[1],
+            "username": row[2]
+        }
+        rows.append(thisdict)
+
+    # TODO: Query 2: Three-table join (color, color-palette, palette)
+
+    connection.close()
+    return render_template('browse.html', rows=rows)
+
+# This route displays various 'fun facts' about the website, such as the number of users and such
+# Primarily intended to meet user requirements for user: CSC 455
+@blue_print.route('/funfacts')
+def funfacts():
+    connection = setup_database_connection()
+
+    # Query 3: Aggregate function to find the total number of users who have signed up
+    result = connection.execute('SELECT COUNT(*) from "user";');
+
+    # There will only be one row and one column, which will be the count of users, so grab that:
+    for row in result:
+        count = row[0]
+
+    # Query 4: Aggegrate function using GROUP BY and HAVING, which finds our 'power users' (> 5 palettes)
+    result = connection.execute('SELECT COUNT(i."paletteId") as "Number of Palettes", "user".username from "user" '
+                                'INNER JOIN image i on "user".username = i.username '
+                                'INNER JOIN palette p on i."paletteId" = p."paletteId" '
+                                'GROUP BY "user".username '
+                                'HAVING COUNT(i."paletteId") > 5;')
+
+    powerUsers = []
+    for row in result:
+        print("row:", row)
+        thisdict = {
+            "numPalettes": row[0],
+            "username": row[1]
+        }
+        powerUsers.append(thisdict)
+
+    # Query 5: Text-based search query using "LIKE" and Wildcards, which finds the number of "awesome" uploads
+    # Note that we need to use sqlAlchemy.text() in order to properly create this query due to the "like" keyword
+    sql = text("SELECT COUNT(filepath) FROM image WHERE filepath LIKE :keyword;")
+    result = connection.execute(sql, keyword='%awesome%');
+
+    # There will only be one row and one column, which will be the count of users, so grab that:
+    for row in result:
+        numAwesome = row[0]
+
+    connection.close()
+    return render_template('funfacts.html', numUsers=count, powerUsers=powerUsers, numAwesome=numAwesome)
+
+
+# Setup connection to DB in order to manually write queries to comply with CSC 455 requirements
+def setup_database_connection():
+    with app.app_context():
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    connection = engine.connect()
+    return connection
