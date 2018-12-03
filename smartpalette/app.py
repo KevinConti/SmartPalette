@@ -20,6 +20,7 @@ def create_app():
     app.register_blueprint(blue_print)
     app.register_blueprint(api)
     db.init_app(app)
+
     login = LoginManager(app)
 
     # ensure the instance folder exists
@@ -61,7 +62,7 @@ def configure_app(app):
         username = os.environ['PGUSER']
         password = os.environ['PGPASSWORD']
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/mylocaldb'.format(
-            username, 
+            username,
             password
         )
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
