@@ -155,23 +155,66 @@ def display(filename):
 def browse():
     connection = setup_database_connection()
 
-    # Query 1: Two-table join to find all palettes, along with the username of the user
-    result = connection.execute('select * from palette INNER JOIN image i on palette."paletteId" = i."paletteId";');
-    print("result: ", result)
-    rows = []
+    # Query 1: Two-table self-join to find every color in each palette
+    listOfTuples = get_color_tuples(connection);
+
+    # Query 2: Three-table join (palette, user, image)
+    palettesById = get_palettes_by_id(connection)
+
+
+    connection.close()
+    return render_template('browse.html', paletteColors=listOfTuples, palettesById=palettesById)
+
+
+def get_color_tuples(connection):
+    result = connection.execute('SELECT DISTINCT p1."paletteId", p1.hex FROM palette_colors p1 '
+                                'INNER JOIN palette_colors p2 on p1."paletteId" = p2."paletteId" '
+                                'AND p1.hex <> p2.hex;');
+
+    # Format the ResultQuery into a list of dictionaries
+    paletteColors = []
     for row in result:
-        print("row:", row)
+        thisdict = {
+            "paletteId": row[0],
+            "hex": row[1]
+        }
+        paletteColors.append(thisdict)
+
+    # Translate the list of dictionaries into a dictionary of tuples
+    # No, I'm not this smart. Here's the SO link:
+    # https://stackoverflow.com/questions/15917319/convert-a-list-of-dictionaries-into-a-dictionary-of-tuples
+    from collections import defaultdict
+    dict_of_touples = defaultdict(tuple)
+
+    for dct in paletteColors:
+        dict_of_touples[dct['paletteId']] += (dct['hex'],)
+
+    # Order it
+    from collections import OrderedDict
+    sortedTouples = OrderedDict(sorted(dict_of_touples.items()))
+
+    return sortedTouples
+
+
+def get_palettes_by_id(connection):
+    sql = text('SELECT palette."paletteId", filepath, "user".username '
+               'FROM palette '
+               'INNER JOIN image on palette."paletteId" = image."paletteId" '
+               'INNER JOIN "user" on image.username = "user".username '
+               'ORDER BY palette."paletteId";')
+    result = connection.execute(sql)
+
+    palettesById = []
+    for row in result:
         thisdict = {
             "paletteId": row[0],
             "filepath": row[1],
-            "username": row[2]
+            "username": row[2],
         }
-        rows.append(thisdict)
+        palettesById.append(thisdict)
 
-    # TODO: Query 2: Three-table join (color, color-palette, palette)
+    return palettesById
 
-    connection.close()
-    return render_template('browse.html', rows=rows)
 
 # This route displays various 'fun facts' about the website, such as the number of users and such
 # Primarily intended to meet user requirements for user: CSC 455
