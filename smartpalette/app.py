@@ -1,6 +1,8 @@
 import os
 
 from flask import Flask, render_template
+from flask_migrate import Migrate
+
 from smartpalette.models.models import db, User
 from smartpalette.routes.routes import blue_print, UPLOAD_FOLDER
 from smartpalette.routes.api import api
@@ -20,6 +22,8 @@ def create_app():
     app.register_blueprint(blue_print)
     app.register_blueprint(api)
     db.init_app(app)
+
+    migrate = Migrate(app, db)
 
     login = LoginManager(app)
 
