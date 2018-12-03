@@ -8,7 +8,7 @@ from flask import current_app as app
 from werkzeug.utils import secure_filename
 
 # For requests to DB
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 import requests
@@ -166,8 +166,17 @@ def funfacts():
         }
         powerUsers.append(thisdict)
 
+    # Query 5: Text-based search query using "LIKE" and Wildcards, which finds the number of "awesome" uploads
+    # Note that we need to use sqlAlchemy.text() in order to properly create this query due to the "like" keyword
+    sql = text("SELECT COUNT(filepath) FROM image WHERE filepath LIKE :keyword;")
+    result = connection.execute(sql, keyword='%awesome%');
+
+    # There will only be one row and one column, which will be the count of users, so grab that:
+    for row in result:
+        numAwesome = row[0]
+
     connection.close()
-    return render_template('funfacts.html', numUsers=count, powerUsers=powerUsers)
+    return render_template('funfacts.html', numUsers=count, powerUsers=powerUsers, numAwesome=numAwesome)
 
 
 # Setup connection to DB in order to manually write queries to comply with CSC 455 requirements
