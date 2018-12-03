@@ -57,5 +57,17 @@ class Color(db.Model):
     gValue = db.Column(db.Integer, nullable=False)
     bValue = db.Column(db.Integer, nullable=False)
 
+    def __init__(self, r, g, b):
+        self.rValue = r
+        self.gValue = g
+        self.bValue = b
+        self.hex = Color.rgb2hex(r, g, b)
+        print(self.hex)
+
+    @staticmethod
+    def rgb2hex(r, g, b):
+        hex = "{:02x}{:02x}{:02x}".format(r,g,b)
+        return hex
+
     def __repr__(self):
         return '<Hex value: {}>'.format(self.hex)
