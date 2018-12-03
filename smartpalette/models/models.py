@@ -70,6 +70,7 @@ class Color(db.Model):
     @staticmethod
     def rgb2hex(r, g, b):
         hex = "{:02x}{:02x}{:02x}".format(r,g,b)
+        print(hex)
         return hex
 
     def __repr__(self):
