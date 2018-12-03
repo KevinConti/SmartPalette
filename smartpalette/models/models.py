@@ -26,6 +26,10 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
+    @classmethod
+    def is_username_taken(cls, username):
+        return db.session.query(db.exists().where(User.username==username)).scalar()
+
 class Image(db.Model):
     filepath = db.Column(db.String(), primary_key=True)
     username = db.Column(db.String(), db.ForeignKey('user.username'), nullable=False)
@@ -56,6 +60,18 @@ class Color(db.Model):
     rValue = db.Column(db.Integer, nullable=False)
     gValue = db.Column(db.Integer, nullable=False)
     bValue = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, r, g, b):
+        self.rValue = r
+        self.gValue = g
+        self.bValue = b
+        self.hex = Color.rgb2hex(r, g, b)
+
+    @staticmethod
+    def rgb2hex(r, g, b):
+        hex = "{:02x}{:02x}{:02x}".format(r,g,b)
+        print(hex)
+        return hex
 
     def __repr__(self):
         return '<Hex value: {}>'.format(self.hex)

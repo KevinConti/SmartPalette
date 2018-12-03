@@ -1,21 +1,88 @@
 <!DOCTYPE html>
-<html>
-   <body>
-   
-      <h3>Login</h3>
-      <hr/>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 
-      {%- for category, message in get_flashed_messages(with_categories = true) %}
+    <title>Smart Palette - Login</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Custom CSS and JS -->
+    <script src="../static/js/script.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-sm navbar-dark fixed-top" id="mainNav">
+    <div class="container">
+        <button class="navbar-toggler navbar-toggler-right ml-auto" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <form action=" " method="post">
+                        <button class="nav-button" href="#">Home</button>
+                    </form>
+                </li>
+                <li class="nav-item">
+                     <form action="/upload" method="post">
+                        <button class="nav-button" href="#">Upload</button>
+                     </form>
+                </li>
+                <li class="nav-item">
+                    <form action="#" method="post">
+                        <button class="nav-button" href="#">Gallery</button>
+                    </form>
+                </li>
+                <li class="nav-item">
+                    <form action="/login" method="post">
+                        <button class="nav-button" style="border-bottom: 3px solid #fff;" href="#">Login</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- End Navigation -->
+
+<!-- Content -->
+<div class="main-content">
+    <div class="container d-flex h-100 align-items-center">
+        <div class="mx-auto text-center">
+            <h2 class="form-title">Login</h2>
+            <hr class="star-light">
+            {%- for category, message in get_flashed_messages(with_categories = true) %}
             {{ message }}
-      {%- endfor %}
-      
-      <form method = "POST">
-            <label for = "username">Username</label><br>
-            <input type = "text" name="username"><br>
-            <label for = "password">Password</label><br>
-            <input type = "text" name="password"><br>
-            <input type = "submit" value = "Submit"><br>
-      </form>
-      
-   </body>
+
+            {%- endfor %}
+            <img style="width:175px;height:auto;" class="img-fluid mb-5 d-block mx-auto" src="../static/imgs/login-image.svg" alt="img">
+            <form method = "POST">
+                <label for = "username">Username</label><br>
+                <input type = "text" name="username"><br>
+                <label for = "password">Password</label><br>
+                <input type = "text" name="password"><br>
+                <a class="" style="text-decoration: underline; font-size: 12px; color: #fff;" href="#">Don't have an account?</a>
+                <br>
+                <br>
+                <input type = "submit" value = "Submit"><br>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- End Content -->
+
+</div>
+
+<!-- Bootstrap core JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
 </html>
+

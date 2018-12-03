@@ -20,6 +20,7 @@ def create_app():
     app.register_blueprint(blue_print)
     app.register_blueprint(api)
     db.init_app(app)
+
     login = LoginManager(app)
 
     # ensure the instance folder exists
@@ -36,6 +37,10 @@ def create_app():
     @app.route('/')
     def index():
         return render_template('index.html')
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('404.html'), 404
 
     return app
 
