@@ -15,14 +15,14 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 import requests
 import os
 
-MODE = "prod"
+MODE = "development"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'tif'])
 GENERATOR = PaletteGenerator()
 ANON_COLORS = []
 
 if MODE == "development":
     URL = "http://localhost:5000"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
+    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
 else:
     URL = "https://smartpalette.herokuapp.com"
     UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))

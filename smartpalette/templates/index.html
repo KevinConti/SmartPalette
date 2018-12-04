@@ -26,12 +26,12 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <form action=" " method="post">
-                        <button class="nav-button" style="border-bottom: 3px solid #fff;" href="#">Home</button>
+                    <form action="/" method="get">
+                        <button class="nav-button" href="#">Home</button>
                     </form>
                 </li>
                 <li class="nav-item">
-                     <form action="/upload" method="post">
+                     <form action="/upload/" method="get">
                         <button class="nav-button" href="#">Upload</button>
                      </form>
                 </li>
@@ -41,8 +41,8 @@
                     </form>
                 </li>
                 <li class="nav-item">
-                    <form action="/login" method="post">
-                        <button class="nav-button" href="#">Login</button>
+                    <form action="/login/" method="get">
+                        <button class="nav-button" style="border-bottom: 3px solid #fff;" href="#">Login</button>
                     </form>
                 </li>
             </ul>
@@ -63,7 +63,7 @@
                 Be sure to create an account to share and view others creations.</p>
 
             <br>
-            <form action="/upload" method="post">
+            <form action="/upload/" method="get">
                  <button class="button uploadButton" style="cursor: pointer;">Upload Image</button>
             </form>
             <button class="button" data-toggle="modal" data-target="#showExample">View Example</button>
@@ -94,7 +94,7 @@
             </div>
             <div class="modal-body text-center">
                 <img class="img-fluid mb-5 d-block mx-auto" src="../static/imgs/RainbowPalette.png" style="height: auto; width: 450px; text-align:center; margin-bottom: 20px;">
-                <form action="/upload" method="post">
+                <form action="/upload/" method="get">
                     <button class="button"  style="cursor: pointer;  text-align:center; color:#000">Try Yourself</button>
                 </form>
             </div>

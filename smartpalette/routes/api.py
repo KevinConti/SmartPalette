@@ -9,7 +9,7 @@ MODE = "development"
 
 if MODE == "development":
     URL = "http://localhost:5000"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
+    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
 
 else:
     URL = "https://smartpalette.herokuapp.com"
