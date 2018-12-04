@@ -71,8 +71,13 @@ def configure_app(app):
             username = 'postgres'
             password = 'password'
 
-        #TODO: Thomas has his local DB named mylocaldb, and Kevin's is local_database. Needs to be the same
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/local_database'.format(
+        # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/local_database'.format(
+        #     username,
+        #     password
+        # )
+
+        # For migrations, use below app.config instead of above:
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/prod_copy'.format(
             username,
             password
         )
