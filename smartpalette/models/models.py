@@ -75,3 +75,11 @@ class Color(db.Model):
 
     def __repr__(self):
         return '<Hex value: {}>'.format(self.hex)
+
+
+class Count(db.Model):
+    # Used exclusively for CSC 455 requirement
+    currentCount = db.Column(db.Integer, primary_key=True, unique=False, nullable=True)
+
+    def __init__(self, num):
+        self.num = num
