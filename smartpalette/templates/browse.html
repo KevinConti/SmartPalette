@@ -12,14 +12,20 @@
     <script src="../static/js/script.js"></script>
 </head>
 <body>
-    {% if rows %}
-      {% for row in rows %}
-          <h2>paletteId: {{ row["paletteId"] }}</h2>
-          <h2>username: {{ row["username"] }}</h2>
-          <h2>filepath: {{ row["filepath"] }}</h2>
+    {% if palettesById %}
+      {% for row in palettesById %}
+          <img style="height: 300px" src="{{row["filepath"]}}">
+          <h4>paletteId: {{ row["paletteId"] }}</h4>
+          <h4>username: {{ row["username"] }}</h4>
+          <h4>filepath: {{ row["filepath"] }}</h4>
+          <h4>username: {{ row["username"] }}</h4>
+          <h4>hex values:</h4>
+        {% for hex in paletteColors[row["paletteId"]] %}
+            <h5>{{ hex }}</h5>
+          {% endfor %}
       {%  endfor %}
     {% else %}
-      <h1>Unable to find anything</h1>
+      <h1>Unable to find any palettes</h1>
     {% endif %}
 </body>
 </html>
