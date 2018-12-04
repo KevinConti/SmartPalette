@@ -38,7 +38,7 @@ def create_app():
         return User.query.get(username)
 
     # a simple page that says hello
-    @app.route('/')
+    @app.route('/', methods=['GET', 'POST'])
     def index():
         return render_template('index.html')
 
