@@ -8,6 +8,10 @@ from flask import current_app as app
 from werkzeug.utils import secure_filename
 from uuid import uuid4
 
+# For requests to DB
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import scoped_session, sessionmaker
+
 import requests
 import os
 
@@ -18,7 +22,7 @@ ANON_COLORS = []
 
 if MODE == "development":
     URL = "http://localhost:5000"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
+    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
 else:
     URL = "https://smartpalette.herokuapp.com"
     UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
@@ -146,3 +150,117 @@ def display(filename):
     except UnboundLocalError:
         abort(404)
     return render_template('display.html', filename=image, color_list=colors)
+
+@blue_print.route('/browse')
+def browse():
+    connection = setup_database_connection()
+
+    # Query 1: Two-table self-join to find every color in each palette
+    listOfTuples = get_color_tuples(connection);
+
+    # Query 2: Three-table join (palette, user, image)
+    palettesById = get_palettes_by_id(connection)
+
+
+    connection.close()
+    return render_template('browse.html', paletteColors=listOfTuples, palettesById=palettesById)
+
+
+def get_color_tuples(connection):
+    result = connection.execute('SELECT DISTINCT p1."paletteId", p1.hex FROM palette_colors p1 '
+                                'INNER JOIN palette_colors p2 on p1."paletteId" = p2."paletteId" '
+                                'AND p1.hex <> p2.hex;');
+
+    # Format the ResultQuery into a list of dictionaries
+    paletteColors = []
+    for row in result:
+        thisdict = {
+            "paletteId": row[0],
+            "hex": row[1]
+        }
+        paletteColors.append(thisdict)
+
+    # Translate the list of dictionaries into a dictionary of tuples
+    # No, I'm not this smart. Here's the SO link:
+    # https://stackoverflow.com/questions/15917319/convert-a-list-of-dictionaries-into-a-dictionary-of-tuples
+    from collections import defaultdict
+    dict_of_touples = defaultdict(tuple)
+
+    for dct in paletteColors:
+        dict_of_touples[dct['paletteId']] += (dct['hex'],)
+
+    # Order it
+    from collections import OrderedDict
+    sortedTouples = OrderedDict(sorted(dict_of_touples.items()))
+
+    return sortedTouples
+
+
+def get_palettes_by_id(connection):
+    sql = text('SELECT palette."paletteId", filepath, "user".username '
+               'FROM palette '
+               'INNER JOIN image on palette."paletteId" = image."paletteId" '
+               'INNER JOIN "user" on image.username = "user".username '
+               'ORDER BY palette."paletteId";')
+    result = connection.execute(sql)
+
+    palettesById = []
+    for row in result:
+        thisdict = {
+            "paletteId": row[0],
+            "filepath": row[1],
+            "username": row[2],
+        }
+        palettesById.append(thisdict)
+
+    return palettesById
+
+
+# This route displays various 'fun facts' about the website, such as the number of users and such
+# Primarily intended to meet user requirements for user: CSC 455
+@blue_print.route('/funfacts')
+def funfacts():
+    connection = setup_database_connection()
+
+    # Query 3: Aggregate function to find the total number of users who have signed up
+    result = connection.execute('SELECT COUNT(*) from "user";');
+
+    # There will only be one row and one column, which will be the count of users, so grab that:
+    for row in result:
+        count = row[0]
+
+    # Query 4: Aggegrate function using GROUP BY and HAVING, which finds our 'power users' (> 5 palettes)
+    result = connection.execute('SELECT COUNT(i."paletteId") as "Number of Palettes", "user".username from "user" '
+                                'INNER JOIN image i on "user".username = i.username '
+                                'INNER JOIN palette p on i."paletteId" = p."paletteId" '
+                                'GROUP BY "user".username '
+                                'HAVING COUNT(i."paletteId") > 5;')
+
+    powerUsers = []
+    for row in result:
+        print("row:", row)
+        thisdict = {
+            "numPalettes": row[0],
+            "username": row[1]
+        }
+        powerUsers.append(thisdict)
+
+    # Query 5: Text-based search query using "LIKE" and Wildcards, which finds the number of "awesome" uploads
+    # Note that we need to use sqlAlchemy.text() in order to properly create this query due to the "like" keyword
+    sql = text("SELECT COUNT(filepath) FROM image WHERE filepath LIKE :keyword;")
+    result = connection.execute(sql, keyword='%awesome%');
+
+    # There will only be one row and one column, which will be the count of users, so grab that:
+    for row in result:
+        numAwesome = row[0]
+
+    connection.close()
+    return render_template('funfacts.html', numUsers=count, powerUsers=powerUsers, numAwesome=numAwesome)
+
+
+# Setup connection to DB in order to manually write queries to comply with CSC 455 requirements
+def setup_database_connection():
+    with app.app_context():
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    connection = engine.connect()
+    return connection

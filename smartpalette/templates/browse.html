@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Browse</title>
+    <!-- Bootstrap files -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../static/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <!-- Custom CSS and JS -->
+    <script src="../static/js/script.js"></script>
+</head>
+<body>
+    {% if palettesById %}
+      {% for row in palettesById %}
+          <img style="height: 300px" src="{{row["filepath"]}}">
+          <h4>paletteId: {{ row["paletteId"] }}</h4>
+          <h4>username: {{ row["username"] }}</h4>
+          <h4>filepath: {{ row["filepath"] }}</h4>
+          <h4>username: {{ row["username"] }}</h4>
+          <h4>hex values:</h4>
+        {% for hex in paletteColors[row["paletteId"]] %}
+            <h5>{{ hex }}</h5>
+          {% endfor %}
+      {%  endfor %}
+    {% else %}
+      <h1>Unable to find any palettes</h1>
+    {% endif %}
+</body>
+</html>

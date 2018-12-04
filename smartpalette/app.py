@@ -1,6 +1,8 @@
 import os
 
 from flask import Flask, render_template
+from flask_migrate import Migrate
+
 from smartpalette.models.models import db, User
 from smartpalette.routes.routes import blue_print, UPLOAD_FOLDER
 from smartpalette.routes.api import api
@@ -20,6 +22,9 @@ def create_app():
     app.register_blueprint(blue_print)
     app.register_blueprint(api)
     db.init_app(app)
+
+    migrate = Migrate(app, db)
+
     login = LoginManager(app)
 
     # ensure the instance folder exists
@@ -58,12 +63,20 @@ def configure_app(app):
         PGUSER = postgres
         PGPASSWORD = your password that you set for the postgres installation
         """
-        username = os.environ['PGUSER']
-        password = os.environ['PGPASSWORD']
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/mylocaldb'.format(
-            username, 
+        try:
+            username = os.environ['PGUSER']
+            password = os.environ['PGPASSWORD']
+        except KeyError:
+            # Tries to use defaults if environment variables aren't set.
+            username = 'postgres'
+            password = 'password'
+
+        #TODO: Thomas has his local DB named mylocaldb, and Kevin's is local_database. Needs to be the same
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/local_database'.format(
+            username,
             password
         )
+
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
         print("loaded local_database to app")
     elif (app.env == "production"):

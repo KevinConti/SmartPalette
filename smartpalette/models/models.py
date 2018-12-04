@@ -33,7 +33,7 @@ class User(UserMixin, db.Model):
 class Image(db.Model):
     filepath = db.Column(db.String(), primary_key=True)
     username = db.Column(db.String(), db.ForeignKey('user.username'), nullable=False)
-    paletteId = db.Column(db.Integer, db.ForeignKey('palette.paletteId'), nullable=False)
+    paletteId = db.Column(db.Integer, db.ForeignKey('palette.paletteId'), nullable=True)
 
     def __repr__(self):
         return '<image located at: {}>'.format(self.filepath)
@@ -70,6 +70,7 @@ class Color(db.Model):
     @staticmethod
     def rgb2hex(r, g, b):
         hex = "{:02x}{:02x}{:02x}".format(r,g,b)
+        print(hex)
         return hex
 
     def __repr__(self):
