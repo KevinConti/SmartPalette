@@ -11,20 +11,22 @@
 </head>
 <body>
     {%  include 'navbar.html' %}
-    {% if palettesById %}
-      {% for row in palettesById %}
-          <img style="height: 300px" src="{{row["filepath"]}}">
-          <h4>paletteId: {{ row["paletteId"] }}</h4>
-          <h4>username: {{ row["username"] }}</h4>
-          <h4>filepath: {{ row["filepath"] }}</h4>
-          <h4>username: {{ row["username"] }}</h4>
-          <h4>hex values:</h4>
-        {% for hex in paletteColors[row["paletteId"]] %}
-            <h5>{{ hex }}</h5>
-          {% endfor %}
-      {%  endfor %}
-    {% else %}
-      <h1>Unable to find any palettes</h1>
-    {% endif %}
+    <div class="main-content">
+        {% if palettesById %}
+          {% for row in palettesById %}
+              <img style="height: 300px" src="{{row["filepath"]}}">
+              <p>paletteId: {{ row["paletteId"] }}</p>
+              <p>username: {{ row["username"] }}</p>
+              <p>filepath: {{ row["filepath"] }}</p>
+              <p>username: {{ row["username"] }}</p>
+              <p>hex values:</p>
+            {% for hex in paletteColors[row["paletteId"]] %}
+                <div style="width: 100px;height: 100px;margin: 5px;display:inline-block;background-color: #{{ hex }}"></div>
+              {% endfor %}
+          {%  endfor %}
+        {% else %}
+          <h1>Unable to find any palettes</h1>
+        {% endif %}
+    </div>
 </body>
 </html>
