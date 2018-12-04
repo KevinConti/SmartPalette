@@ -151,7 +151,7 @@ def display(filename):
         abort(404)
     return render_template('display.html', filename=image, color_list=colors)
 
-@blue_print.route('/browse')
+@blue_print.route('/browse', methods=['GET', 'POST'])
 def browse():
     connection = setup_database_connection()
 
@@ -218,7 +218,7 @@ def get_palettes_by_id(connection):
 
 # This route displays various 'fun facts' about the website, such as the number of users and such
 # Primarily intended to meet user requirements for user: CSC 455
-@blue_print.route('/funfacts')
+@blue_print.route('/funfacts', methods=['GET', 'POST'])
 def funfacts():
     connection = setup_database_connection()
 
@@ -248,14 +248,68 @@ def funfacts():
     # Query 5: Text-based search query using "LIKE" and Wildcards, which finds the number of "awesome" uploads
     # Note that we need to use sqlAlchemy.text() in order to properly create this query due to the "like" keyword
     sql = text("SELECT COUNT(filepath) FROM image WHERE filepath LIKE :keyword;")
-    result = connection.execute(sql, keyword='%awesome%');
+    result = connection.execute(sql, keyword='%awesome%')
 
     # There will only be one row and one column, which will be the count of users, so grab that:
     for row in result:
         numAwesome = row[0]
 
+    # Query 6: Stored procedure that is subsequently called and determines the total # of palettes
+
+    # Below commented line is for debugging only
+    # connection.execute('DROP FUNCTION numPal;')
+
+    connection.execute("CREATE OR REPLACE FUNCTION numPal() "
+                        "RETURNS bigint AS $numPal$ "
+                        "SELECT COUNT(*) FROM palette;"
+                        "$numPal$ "
+                        "LANGUAGE SQL;")
+
+    result = connection.execute("SELECT * FROM numPal();")
+    # There will only be one row and one column, which will be the count of users, so grab that:
+    for row in result:
+        numPalettes = row[0]
+
+    # Query 7: Stored Procedure that returns a trigger and increments the visited counter
+    # This is launched by a trigger (See Query 8)
+
+    # Below commented line is for debugging only
+    # connection.execute('DROP FUNCTION increment();')
+
+    connection.execute('CREATE OR REPLACE FUNCTION increment() '
+                       'RETURNS TRIGGER AS $k$ '
+                       'BEGIN '
+                       'UPDATE count SET "currentCount" = "currentCount" + 1; '
+                       'RETURN NEW; '
+                       'END; '
+                       '$k$ '
+                       'LANGUAGE plpgsql;')
+
+    # Query 8.5: There is no 'CREATE OR REPLACE' for triggers,
+    # So we must drop if it exists
+    connection.execute('DROP TRIGGER IF EXISTS k ON count;')
+
+    # Query 8: Establishes a Trigger that updates count.num on a INSERT request for the count
+    connection.execute('CREATE TRIGGER k AFTER INSERT '
+                       'ON count '
+                       'FOR EACH ROW EXECUTE PROCEDURE increment();')
+
+    # Query 9: Add an index to the count table, which triggers the trigger
+    connection.execute('INSERT INTO count VALUES(0)');
+
+    # Query 10: Get the max count
+    result = connection.execute('SELECT MAX("currentCount") FROM count ')
+    # There will only be one row and one column, which will be the count of users, so grab that:
+    for row in result:
+        visited = row[0]
+
     connection.close()
-    return render_template('funfacts.html', numUsers=count, powerUsers=powerUsers, numAwesome=numAwesome)
+    return render_template('funfacts.html',
+                           numUsers=count,
+                           powerUsers=powerUsers,
+                           numAwesome=numAwesome,
+                           numPalettes=numPalettes,
+                           visited=visited)
 
 
 # Setup connection to DB in order to manually write queries to comply with CSC 455 requirements

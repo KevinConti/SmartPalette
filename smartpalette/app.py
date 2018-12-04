@@ -38,7 +38,7 @@ def create_app():
         return User.query.get(username)
 
     # a simple page that says hello
-    @app.route('/')
+    @app.route('/', methods=['GET', 'POST'])
     def index():
         return render_template('index.html')
 
@@ -71,11 +71,16 @@ def configure_app(app):
             username = 'postgres'
             password = 'password'
 
-        #TODO: Thomas has his local DB named mylocaldb, and Kevin's is local_database. Needs to be the same
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/local_database'.format(
             username,
             password
         )
+
+        # For migrations, use below app.config instead of above:
+        # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/prod_copy'.format(
+        #     username,
+        #     password
+        # )
 
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
         print("loaded local_database to app")
