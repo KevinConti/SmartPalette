@@ -25,7 +25,7 @@ if MODE == "development":
     UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
 else:
     URL = "https://smartpalette.herokuapp.com"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
+    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
 
 blue_print = Blueprint('blue_print', __name__, template_folder='templates')
 
