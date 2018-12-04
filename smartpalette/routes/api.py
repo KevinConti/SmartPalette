@@ -12,7 +12,7 @@ if MODE == "development":
     UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
 else:
     URL = "https://smartpalette.herokuapp.com"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
+    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
 
 @api.route(API_ENDPOINT + '/users/<string:username>', methods=['GET'])
 def get_user(username):
