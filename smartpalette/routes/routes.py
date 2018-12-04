@@ -151,7 +151,7 @@ def display(filename):
         abort(404)
     return render_template('display.html', filename=image, color_list=colors)
 
-@blue_print.route('/browse')
+@blue_print.route('/browse', methods=['GET', 'POST'])
 def browse():
     connection = setup_database_connection()
 
@@ -218,7 +218,7 @@ def get_palettes_by_id(connection):
 
 # This route displays various 'fun facts' about the website, such as the number of users and such
 # Primarily intended to meet user requirements for user: CSC 455
-@blue_print.route('/funfacts')
+@blue_print.route('/funfacts', methods=['GET', 'POST'])
 def funfacts():
     connection = setup_database_connection()
 
