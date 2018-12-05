@@ -1,18 +1,11 @@
 from flask import request, jsonify, Blueprint, send_from_directory, abort
+from flask import current_app as app
 import smartpalette.models.models as models # db, User, Palette, Color
 import werkzeug.exceptions as ex
 import os
 
 api = Blueprint('api', __name__, template_folder='templates')
 API_ENDPOINT = "/api/v1"
-MODE = "prod"
-
-if MODE == "development":
-    URL = "http://localhost:5000"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
-else:
-    URL = "https://smartpalette.herokuapp.com"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
 
 @api.route(API_ENDPOINT + '/users/<string:username>', methods=['GET'])
 def get_user(username):
@@ -32,11 +25,11 @@ def create_user():
 
 @api.route(API_ENDPOINT + '/images/<string:filename>')
 def get_image(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @api.route(API_ENDPOINT + '/images/<string:filename>', methods=['DELETE'])
 def delete_image(filename):
-    os.remove(UPLOAD_FOLDER + '/' + filename)
+    os.remove(app.config['UPLOAD_FOLDER'] + '/' + filename)
     return "Deleted image"
 
 @api.route(API_ENDPOINT + '/images/', methods=['POST'])
