@@ -79,7 +79,7 @@ class Color(db.Model):
 
 class Count(db.Model):
     # Used exclusively for CSC 455 requirement
-    currentCount = db.Column(db.Integer, primary_key=True, unique=False, nullable=True)
+    num = db.Column(db.Integer, primary_key=True, unique=False, nullable=True)
 
     def __init__(self, num):
         self.num = num
