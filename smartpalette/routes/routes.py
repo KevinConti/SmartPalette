@@ -289,7 +289,7 @@ def funfacts():
                        'FOR EACH ROW EXECUTE PROCEDURE increment();')
 
     # Query 9: Add an index to the count table, which triggers the trigger
-    connection.execute('INSERT INTO count VALUES(0)');
+    connection.execute('INSERT INTO count VALUES(0);')
 
     # Query 10: Get the max count
     result = connection.execute('SELECT MAX("currentCount") FROM count ')
