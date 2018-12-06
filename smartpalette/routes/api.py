@@ -34,8 +34,18 @@ def delete_image(filename):
 
 @api.route(API_ENDPOINT + '/images/', methods=['POST'])
 def create_image():
-    # TODO: Create an image in the context of a user
+    data = request.get_json()
+    user = models.User.query.filter_by(username=data['username']).first_or_404()
+    new_image = models.Image(data['filename'], user)
+    models.db.session.add(new_image)
+    models.db.session.commit()
+    return "Created Image {} for User {}".format(data['filename'], user.username)
+
+@api.route(API_ENDPOINT + '/palettes/', methods=['POST'])
+def create_palette():
     pass
+    # data = request.get_json()
+    # return ""
 
 @api.route(API_ENDPOINT + '/colors/<string:hex>', methods=['GET'])
 def get_color(hex):
@@ -45,7 +55,10 @@ def get_color(hex):
 @api.route(API_ENDPOINT + '/colors/', methods=['POST'])
 def create_color():
     data = request.get_json()
-    new_color = models.Color(data['r'], data['g'], data['b'])
-    models.db.session.add(new_color)
-    models.db.session.commit()
+    try:
+        new_color = models.Color(data['r'], data['g'], data['b'])
+        models.db.session.add(new_color)
+        models.db.session.commit()
+    except Exception:
+        return "Color {}{}{} already in database".format(data['r'], data['g'], data['b'])
     return "Added color {}{}{}".format(data['r'], data['g'], data['b'])

@@ -35,6 +35,11 @@ class Image(db.Model):
     username = db.Column(db.String(), db.ForeignKey('user.username'), nullable=False)
     paletteId = db.Column(db.Integer, db.ForeignKey('palette.paletteId'), nullable=True)
 
+    def __init__(self, filename, username, paletteId=None):
+        self.filepath = filename
+        self.username = username.username
+        self.paletteId = paletteId
+
     def __repr__(self):
         return '<image located at: {}>'.format(self.filepath)
 

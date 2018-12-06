@@ -1,6 +1,6 @@
 from smartpalette.Algorithm.ColorPaletteGenerator import PaletteGenerator
-from smartpalette.models.models import User
-from flask import Flask, render_template, Blueprint, abort
+from smartpalette.models.models import User, Color
+from flask import Flask, render_template, Blueprint, abort, jsonify
 from flask import request, flash, redirect, url_for, send_from_directory
 from flask_login import current_user, login_user, logout_user
 from flask import current_app as app
@@ -42,7 +42,7 @@ def register():
             user_data['username'] = request.form['username']
             user_data['password'] = request.form['password']
 
-            r = requests.post(request.base_url + API_ENDPOINT + "/users/", json=user_data)
+            r = requests.post(request.url_root + API_ENDPOINT + "/users/", json=user_data)
 
             if r.status_code == 409:
                 flash("User already exists, please try again.")
@@ -58,7 +58,7 @@ def register():
 def profile(username):
     username = username.lower()
     try:
-        user = requests.get(request.base_url + API_ENDPOINT + "/users/{}".format(username)).json()
+        user = requests.get(request.url_root + API_ENDPOINT + "/users/{}".format(username)).json()
     except ValueError:
         return 'Sorry, this user does not exist'
     return render_template('profile.html', username=username.capitalize(), images=user.get('images'))
@@ -100,7 +100,6 @@ def upload():
             flash('Invalid input. Please upload a proper image type and number of colors.')
         elif image and allowed_file(image.filename):
             filename = secure_filename(str(uuid4()))
-            print(filename)
             image.save(
                 os.path.join(
                     app.config['UPLOAD_FOLDER'],
@@ -111,13 +110,16 @@ def upload():
             color_list = GENERATOR.create_palette(image, num_of_colors)
 
             if current_user.is_authenticated:
+                hex_codes = []
                 rgb_colors = {}
                 for i in color_list:
                     rgb_colors = {}
                     rgb_colors['r'] = i[0]
                     rgb_colors['g'] = i[1]
                     rgb_colors['b'] = i[2]
-                    requests.post(request.base_url + API_ENDPOINT + '/colors/', json=rgb_colors)
+                    hex_codes.append(Color.rgb2hex(rgb_colors['r'], rgb_colors['g'], rgb_colors['b']))
+                    requests.post(request.url_root + API_ENDPOINT + '/colors/', json=rgb_colors)
+                requests.post(request.url_root + API_ENDPOINT + "/images/", json={"filename":filename, "username":current_user.username})
             else:
                 ANON_COLORS.append((filename, color_list))
 
@@ -140,7 +142,6 @@ def display(filename):
         colors = tup[1]
         ANON_COLORS.remove(tup)
         image = request.url_root + API_ENDPOINT + '/images/' + filename
-        print(image)
     except UnboundLocalError:
         abort(404)
     return render_template('display.html', filename=image, color_list=colors)
