@@ -1,7 +1,6 @@
 from smartpalette.Algorithm.ColorPaletteGenerator import PaletteGenerator
-from smartpalette.routes.api import API_ENDPOINT
-from smartpalette.models.models import User
-from flask import Flask, render_template, Blueprint, abort
+from smartpalette.models.models import User, Color
+from flask import Flask, render_template, Blueprint, abort, jsonify
 from flask import request, flash, redirect, url_for, send_from_directory
 from flask_login import current_user, login_user, logout_user
 from flask import current_app as app
@@ -15,17 +14,10 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 import requests
 import os
 
-MODE = "development"
+API_ENDPOINT = "api/v1"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'tif'])
 GENERATOR = PaletteGenerator()
 ANON_COLORS = []
-
-if MODE == "development":
-    URL = "http://localhost:5000"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
-else:
-    URL = "https://smartpalette.herokuapp.com"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
 
 blue_print = Blueprint('blue_print', __name__, template_folder='templates')
 
@@ -50,7 +42,7 @@ def register():
             user_data['username'] = request.form['username']
             user_data['password'] = request.form['password']
 
-            r = requests.post(URL + API_ENDPOINT + "/users/", json=user_data)
+            r = requests.post(request.url_root + API_ENDPOINT + "/users/", json=user_data)
 
             if r.status_code == 409:
                 flash("User already exists, please try again.")
@@ -66,7 +58,7 @@ def register():
 def profile(username):
     username = username.lower()
     try:
-        user = requests.get(URL + API_ENDPOINT + "/users/{}".format(username)).json()
+        user = requests.get(request.url_root + API_ENDPOINT + "/users/{}".format(username)).json()
     except ValueError:
         return 'Sorry, this user does not exist'
     return render_template('profile.html', username=username.capitalize(), images=user.get('images'))
@@ -118,13 +110,16 @@ def upload():
             color_list = GENERATOR.create_palette(image, num_of_colors)
 
             if current_user.is_authenticated:
+                hex_codes = []
                 rgb_colors = {}
                 for i in color_list:
                     rgb_colors = {}
                     rgb_colors['r'] = i[0]
                     rgb_colors['g'] = i[1]
                     rgb_colors['b'] = i[2]
-                    requests.post(URL + API_ENDPOINT + '/colors/', json=rgb_colors)
+                    hex_codes.append(Color.rgb2hex(rgb_colors['r'], rgb_colors['g'], rgb_colors['b']))
+                    requests.post(request.url_root + API_ENDPOINT + '/colors/', json=rgb_colors)
+                requests.post(request.url_root + API_ENDPOINT + "/images/", json={"filename":filename, "username":current_user.username})
             else:
                 ANON_COLORS.append((filename, color_list))
 
@@ -146,12 +141,12 @@ def display(filename):
                 tup = i
         colors = tup[1]
         ANON_COLORS.remove(tup)
-        image = URL + API_ENDPOINT + '/images/' + filename
+        image = request.url_root + API_ENDPOINT + '/images/' + filename
     except UnboundLocalError:
         abort(404)
     return render_template('display.html', filename=image, color_list=colors)
 
-@blue_print.route('/browse')
+@blue_print.route('/browse', methods=['GET', 'POST'])
 def browse():
     connection = setup_database_connection()
 
@@ -218,7 +213,7 @@ def get_palettes_by_id(connection):
 
 # This route displays various 'fun facts' about the website, such as the number of users and such
 # Primarily intended to meet user requirements for user: CSC 455
-@blue_print.route('/funfacts')
+@blue_print.route('/funfacts', methods=['GET', 'POST'])
 def funfacts():
     connection = setup_database_connection()
 
@@ -248,14 +243,68 @@ def funfacts():
     # Query 5: Text-based search query using "LIKE" and Wildcards, which finds the number of "awesome" uploads
     # Note that we need to use sqlAlchemy.text() in order to properly create this query due to the "like" keyword
     sql = text("SELECT COUNT(filepath) FROM image WHERE filepath LIKE :keyword;")
-    result = connection.execute(sql, keyword='%awesome%');
+    result = connection.execute(sql, keyword='%awesome%')
 
     # There will only be one row and one column, which will be the count of users, so grab that:
     for row in result:
         numAwesome = row[0]
 
+    # Query 6: Stored procedure that is subsequently called and determines the total # of palettes
+
+    # Below commented line is for debugging only
+    # connection.execute('DROP FUNCTION numPal;')
+
+    connection.execute("CREATE OR REPLACE FUNCTION numPal() "
+                        "RETURNS bigint AS $numPal$ "
+                        "SELECT COUNT(*) FROM palette;"
+                        "$numPal$ "
+                        "LANGUAGE SQL;")
+
+    result = connection.execute("SELECT * FROM numPal();")
+    # There will only be one row and one column, which will be the count of users, so grab that:
+    for row in result:
+        numPalettes = row[0]
+
+    # Query 7: Stored Procedure that returns a trigger and increments the visited counter
+    # This is launched by a trigger (See Query 8)
+
+    # Below commented line is for debugging only
+    # connection.execute('DROP FUNCTION increment();')
+
+    connection.execute('CREATE OR REPLACE FUNCTION increment() '
+                       'RETURNS TRIGGER AS $k$ '
+                       'BEGIN '
+                       'UPDATE count SET "currentCount" = "currentCount" + 1; '
+                       'RETURN NEW; '
+                       'END; '
+                       '$k$ '
+                       'LANGUAGE plpgsql;')
+
+    # Query 8.5: There is no 'CREATE OR REPLACE' for triggers,
+    # So we must drop if it exists
+    connection.execute('DROP TRIGGER IF EXISTS k ON count;')
+
+    # Query 8: Establishes a Trigger that updates count.num on a INSERT request for the count
+    connection.execute('CREATE TRIGGER k AFTER INSERT '
+                       'ON count '
+                       'FOR EACH ROW EXECUTE PROCEDURE increment();')
+
+    # Query 9: Add an index to the count table, which triggers the trigger
+    connection.execute('INSERT INTO count VALUES(0);')
+
+    # Query 10: Get the max count
+    result = connection.execute('SELECT MAX("currentCount") FROM count ')
+    # There will only be one row and one column, which will be the count of users, so grab that:
+    for row in result:
+        visited = row[0]
+
     connection.close()
-    return render_template('funfacts.html', numUsers=count, powerUsers=powerUsers, numAwesome=numAwesome)
+    return render_template('funfacts.html',
+                           numUsers=count,
+                           powerUsers=powerUsers,
+                           numAwesome=numAwesome,
+                           numPalettes=numPalettes,
+                           visited=visited)
 
 
 # Setup connection to DB in order to manually write queries to comply with CSC 455 requirements

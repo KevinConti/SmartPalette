@@ -35,6 +35,11 @@ class Image(db.Model):
     username = db.Column(db.String(), db.ForeignKey('user.username'), nullable=False)
     paletteId = db.Column(db.Integer, db.ForeignKey('palette.paletteId'), nullable=True)
 
+    def __init__(self, filename, username, paletteId=None):
+        self.filepath = filename
+        self.username = username.username
+        self.paletteId = paletteId
+
     def __repr__(self):
         return '<image located at: {}>'.format(self.filepath)
 
@@ -75,3 +80,11 @@ class Color(db.Model):
 
     def __repr__(self):
         return '<Hex value: {}>'.format(self.hex)
+
+
+class Count(db.Model):
+    # Used exclusively for CSC 455 requirement
+    currentCount = db.Column(db.Integer, primary_key=True, unique=False, nullable=True)
+
+    def __init__(self, num):
+        self.num = num

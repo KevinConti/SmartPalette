@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from flask_migrate import Migrate
 
 from smartpalette.models.models import db, User
-from smartpalette.routes.routes import blue_print, UPLOAD_FOLDER
+from smartpalette.routes.routes import blue_print
 from smartpalette.routes.api import api
 from flask_login import LoginManager
 
@@ -38,7 +38,7 @@ def create_app():
         return User.query.get(username)
 
     # a simple page that says hello
-    @app.route('/')
+    @app.route('/', methods=['GET', 'POST'])
     def index():
         return render_template('index.html')
 
@@ -56,8 +56,8 @@ def configure_app(app):
     # If "Development" then will attempt to find a local postgresql DB
     # Else will attempt to connect to prod
     app.config['SECRET_KEY'] = "abcitseasyas123"
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     if (app.env == "development"):
+        # If this doesn't work, go to psql shell and run "delete from alembic_version;"
         """
         For the user name and password, set environmental variables
         PGUSER = postgres
@@ -71,15 +71,23 @@ def configure_app(app):
             username = 'postgres'
             password = 'password'
 
-        #TODO: Thomas has his local DB named mylocaldb, and Kevin's is local_database. Needs to be the same
+        app.config['UPLOAD_FOLDER'] = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
+
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/local_database'.format(
             username,
             password
         )
 
+        # For migrations, use below app.config instead of above:
+        # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/prod_copy'.format(
+        #     username,
+        #     password
+        # )
+
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
         print("loaded local_database to app")
     elif (app.env == "production"):
+        app.config['UPLOAD_FOLDER'] = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     elif (app.env == "testing"):

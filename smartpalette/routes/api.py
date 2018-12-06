@@ -1,18 +1,11 @@
 from flask import request, jsonify, Blueprint, send_from_directory, abort
+from flask import current_app as app
 import smartpalette.models.models as models # db, User, Palette, Color
 import werkzeug.exceptions as ex
 import os
 
 api = Blueprint('api', __name__, template_folder='templates')
 API_ENDPOINT = "/api/v1"
-MODE = "development"
-
-if MODE == "development":
-    URL = "http://localhost:5000"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
-else:
-    URL = "https://smartpalette.herokuapp.com"
-    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
 
 @api.route(API_ENDPOINT + '/users/<string:username>', methods=['GET'])
 def get_user(username):
@@ -32,17 +25,27 @@ def create_user():
 
 @api.route(API_ENDPOINT + '/images/<string:filename>')
 def get_image(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @api.route(API_ENDPOINT + '/images/<string:filename>', methods=['DELETE'])
 def delete_image(filename):
-    os.remove(UPLOAD_FOLDER + '/' + filename)
+    os.remove(app.config['UPLOAD_FOLDER'] + '/' + filename)
     return "Deleted image"
 
 @api.route(API_ENDPOINT + '/images/', methods=['POST'])
 def create_image():
-    # TODO: Create an image in the context of a user
+    data = request.get_json()
+    user = models.User.query.filter_by(username=data['username']).first_or_404()
+    new_image = models.Image(data['filename'], user)
+    models.db.session.add(new_image)
+    models.db.session.commit()
+    return "Created Image {} for User {}".format(data['filename'], user.username)
+
+@api.route(API_ENDPOINT + '/palettes/', methods=['POST'])
+def create_palette():
     pass
+    # data = request.get_json()
+    # return ""
 
 @api.route(API_ENDPOINT + '/colors/<string:hex>', methods=['GET'])
 def get_color(hex):
@@ -52,7 +55,10 @@ def get_color(hex):
 @api.route(API_ENDPOINT + '/colors/', methods=['POST'])
 def create_color():
     data = request.get_json()
-    new_color = models.Color(data['r'], data['g'], data['b'])
-    models.db.session.add(new_color)
-    models.db.session.commit()
+    try:
+        new_color = models.Color(data['r'], data['g'], data['b'])
+        models.db.session.add(new_color)
+        models.db.session.commit()
+    except Exception:
+        return "Color {}{}{} already in database".format(data['r'], data['g'], data['b'])
     return "Added color {}{}{}".format(data['r'], data['g'], data['b'])
