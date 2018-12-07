@@ -1,5 +1,55 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <title>{{ username }} Profile </title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Custom CSS and JS -->
+    <script src="../static/js/script.js"></script>
+    <link rel="stylesheet" href="../static/css/styles.css">
+
+</head>
+<body>
+
 {%  include 'navbar.html' %}
-<h1>{{ username }}'s Profile</h1>
-<h2>Images:</h2>
-<br>
-{{ images }}
+<!-- Content -->
+<div class="main-content">
+    <div class="container d-flex h-100 align-items-center">
+        <div class="mx-auto text-center">
+            <div class="row">
+                <div class="col-lg-3">
+                    <h2> Welcome </h2>
+                    <p>{{ username }}</p>
+                    <button class="nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.browse')}}';">Gallery</button>
+                    <button class="nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.upload')}}';">Upload</button>
+                    <button class="nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.logout')}}';">Logout</button>
+                </div>
+                <div class="col-lg-9">
+                    <h2>Your created palettes </h2>
+                    <br>
+
+                    {{ images }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- End Content -->
+
+
+
+<!-- Bootstrap core JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</body>
+</html>
