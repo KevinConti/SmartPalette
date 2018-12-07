@@ -1,5 +1,5 @@
 from smartpalette.Algorithm.ColorPaletteGenerator import PaletteGenerator
-from smartpalette.models.models import User, Color
+from smartpalette.models.models import User, Color, Palette, db
 from flask import Flask, render_template, Blueprint, abort, jsonify
 from flask import request, flash, redirect, url_for, send_from_directory
 from flask_login import current_user, login_user, logout_user
@@ -13,11 +13,11 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 import requests
 import os
+import smartpalette.routes.api as api
 
 API_ENDPOINT = "api/v1"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'tif'])
 GENERATOR = PaletteGenerator()
-ANON_COLORS = []
 
 blue_print = Blueprint('blue_print', __name__, template_folder='templates')
 
@@ -110,19 +110,20 @@ def upload():
             color_list = GENERATOR.create_palette(image, num_of_colors)
 
             if current_user.is_authenticated:
-                hex_codes = []
+                new_image = api.create_image({"filename":filename, "username":current_user.username})
+                new_palette = Palette(new_image)
                 rgb_colors = {}
                 for i in color_list:
                     rgb_colors = {}
                     rgb_colors['r'] = i[0]
                     rgb_colors['g'] = i[1]
                     rgb_colors['b'] = i[2]
-                    hex_codes.append(Color.rgb2hex(rgb_colors['r'], rgb_colors['g'], rgb_colors['b']))
-                    requests.post(request.url_root + API_ENDPOINT + '/colors/', json=rgb_colors)
-                requests.post(request.url_root + API_ENDPOINT + "/images/", json={"filename":filename, "username":current_user.username})
+                    new_color = api.create_color(rgb_colors)
+                    new_palette.colors.append(new_color)
+                new_palette.image = new_image
+                db.session.add(new_palette)
+                db.session.commit()
             else:
-                ANON_COLORS.append((filename, color_list))
-
                 return redirect(url_for(
                         'blue_print.display',
                         filename=filename
@@ -134,17 +135,8 @@ def upload():
 
 @blue_print.route('/display/<string:filename>/', methods=['GET'])
 def display(filename):
-    try:
-        # Ran a 4 loop in case there were multiple users uploading at the same time
-        for i in ANON_COLORS:
-            if i[0] == filename:
-                tup = i
-        colors = tup[1]
-        ANON_COLORS.remove(tup)
-        image = request.url_root + API_ENDPOINT + '/images/' + filename
-    except UnboundLocalError:
-        abort(404)
-    return render_template('display.html', filename=image, color_list=colors)
+    image = request.url_root + API_ENDPOINT + '/images/' + filename
+    return render_template('display.html', filename=image)
 
 @blue_print.route('/browse', methods=['GET', 'POST'])
 def browse():

@@ -56,6 +56,9 @@ class Palette(db.Model):
     colors = db.relationship('Color', secondary=Image.palette_colors, lazy='subquery',
                              backref=db.backref('palettes', lazy=True))
 
+    def __init__(self, image):
+        self.image = image
+
     def __repr__(self):
         return '<paletteId: {}>'.format(self.paletteId)
 
