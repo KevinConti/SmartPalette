@@ -71,6 +71,8 @@ def configure_app(app):
             username = 'postgres'
             password = 'password'
 
+        app.config['UPLOAD_FOLDER'] = os.path.abspath(os.path.join(os.getcwd(), "./smartpalette/uploads"))
+
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@localhost:5432/local_database'.format(
             username,
             password
