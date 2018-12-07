@@ -33,6 +33,7 @@
             {% for hex in paletteColors[row["paletteId"]] %}
                 <div style="width: 100px;height: 100px;margin: 5px;display:inline-block;background-color: #{{ hex }}"></div>
               {% endfor %}
+            <br>
           {%  endfor %}
         {% else %}
           <h2>Unable to find any palettes</h2>
