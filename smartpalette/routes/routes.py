@@ -157,8 +157,7 @@ def browse():
 
 def get_color_tuples(connection):
     result = connection.execute('SELECT DISTINCT p1."paletteId", p1.hex FROM palette_colors p1 '
-                                'INNER JOIN palette_colors p2 on p1."paletteId" = p2."paletteId" '
-                                'AND p1.hex <> p2.hex;');
+                                'INNER JOIN palette_colors p2 on p1."paletteId" = p2."paletteId" ');
 
     # Format the ResultQuery into a list of dictionaries
     paletteColors = []
@@ -197,9 +196,10 @@ def get_palettes_by_id(connection):
     for row in result:
         thisdict = {
             "paletteId": row[0],
-            "filepath": row[1],
+            "filepath": request.url_root + API_ENDPOINT + '/images/' + row[1],
             "username": row[2],
         }
+
         palettesById.append(thisdict)
 
     return palettesById
