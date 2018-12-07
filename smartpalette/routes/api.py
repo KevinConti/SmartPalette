@@ -32,14 +32,12 @@ def delete_image(filename):
     os.remove(app.config['UPLOAD_FOLDER'] + '/' + filename)
     return "Deleted image"
 
-@api.route(API_ENDPOINT + '/images/', methods=['POST'])
-def create_image():
-    data = request.get_json()
+def create_image(data):
     user = models.User.query.filter_by(username=data['username']).first_or_404()
     new_image = models.Image(data['filename'], user)
     models.db.session.add(new_image)
     models.db.session.commit()
-    return "Created Image {} for User {}".format(data['filename'], user.username)
+    return new_image
 
 @api.route(API_ENDPOINT + '/palettes/', methods=['POST'])
 def create_palette():
@@ -52,13 +50,13 @@ def get_color(hex):
     color = models.Color.query.filter_by(hex=hex).first_or_404()
     return jsonify(hex=color.hex, rgb=[color.rValue, color.gValue, color.bValue])
 
-@api.route(API_ENDPOINT + '/colors/', methods=['POST'])
-def create_color():
-    data = request.get_json()
+def create_color(data):
     try:
         new_color = models.Color(data['r'], data['g'], data['b'])
         models.db.session.add(new_color)
         models.db.session.commit()
     except Exception:
-        return "Color {}{}{} already in database".format(data['r'], data['g'], data['b'])
-    return "Added color {}{}{}".format(data['r'], data['g'], data['b'])
+        models.db.session.rollback()
+        hex = models.Color.rgb2hex(data['r'], data['g'], data['b'])
+        return models.Color.query.filter_by(hex=hex).first_or_404()
+    return new_color
