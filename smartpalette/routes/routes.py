@@ -1,5 +1,5 @@
 from smartpalette.Algorithm.ColorPaletteGenerator import PaletteGenerator
-from smartpalette.models.models import User, Color
+from smartpalette.models.models import User, Color, Palette
 from flask import Flask, render_template, Blueprint, abort, jsonify, session
 from flask import request, flash, redirect, url_for, send_from_directory
 from flask_login import current_user, login_user, logout_user
