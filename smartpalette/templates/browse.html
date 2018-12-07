@@ -29,7 +29,7 @@
               <p>paletteId: {{ row["paletteId"] }}</p>
               <p>username: {{ row["username"] }}</p>
               <p>filepath: {{ row["filepath"] }}</p>
-              <p>hex values:</p><br>
+              <p>hex values:</p>
             {% for hex in paletteColors[row["paletteId"]] %}
                 <div style="width: 100px;height: 100px;margin: 5px;display:inline-block;background-color: #{{ hex }}"></div>
               {% endfor %}
