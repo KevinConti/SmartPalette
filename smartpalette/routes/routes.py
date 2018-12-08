@@ -1,6 +1,6 @@
 from smartpalette.Algorithm.ColorPaletteGenerator import PaletteGenerator
 from smartpalette.models.models import User, Color, Palette, db
-from flask import Flask, render_template, Blueprint, abort, jsonify
+from flask import Flask, render_template, Blueprint, abort, jsonify, session
 from flask import request, flash, redirect, url_for, send_from_directory
 from flask_login import current_user, login_user, logout_user
 from flask import current_app as app
@@ -77,12 +77,14 @@ def login():
                 flash('Error: Invalid username or password')
                 return redirect(url_for('blue_print.login'))
             else:
+                session['logged_in'] = True
                 login_user(user)
                 return redirect(url_for('index'))
     return render_template('login.html')
 
 @blue_print.route('/logout/')
 def logout():
+    session['logged_in'] = False
     if current_user.is_authenticated:
         logout_user()
         return redirect(url_for('index'))
@@ -155,8 +157,7 @@ def browse():
 
 def get_color_tuples(connection):
     result = connection.execute('SELECT DISTINCT p1."paletteId", p1.hex FROM palette_colors p1 '
-                                'INNER JOIN palette_colors p2 on p1."paletteId" = p2."paletteId" '
-                                'AND p1.hex <> p2.hex;');
+                                'INNER JOIN palette_colors p2 on p1."paletteId" = p2."paletteId" ');
 
     # Format the ResultQuery into a list of dictionaries
     paletteColors = []
@@ -195,9 +196,10 @@ def get_palettes_by_id(connection):
     for row in result:
         thisdict = {
             "paletteId": row[0],
-            "filepath": row[1],
+            "filepath": request.url_root + API_ENDPOINT + '/images/' + row[1],
             "username": row[2],
         }
+
         palettesById.append(thisdict)
 
     return palettesById

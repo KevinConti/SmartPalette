@@ -24,11 +24,14 @@
         <div class="mx-auto text-center">
             <h2 class="form-title">Login</h2>
             <hr class="star-light">
+
+            <img style="width:175px;height:auto;" class="img-fluid mb-5 d-block mx-auto" src="../static/imgs/login-image.svg" alt="img">
+            <div style="color:#FF0057;">
             {%- for category, message in get_flashed_messages(with_categories = true) %}
             {{ message }}
 
             {%- endfor %}
-            <img style="width:175px;height:auto;" class="img-fluid mb-5 d-block mx-auto" src="../static/imgs/login-image.svg" alt="img">
+        </div>
             <form method = "POST">
                 <label for = "username">Username</label><br>
                 <input type = "text" name="username"><br>
