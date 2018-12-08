@@ -41,7 +41,7 @@ class Image(db.Model):
         self.paletteId = paletteId
 
     def __repr__(self):
-        return '<image located at: {}>'.format(self.filepath)
+        return '{}'.format(self.filepath)
 
     palette_colors = db.Table(
         'palette_colors',

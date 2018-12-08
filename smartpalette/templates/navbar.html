@@ -17,7 +17,7 @@
                     </li>
                     {% if session['logged_in'] == True %}
                         <li class="nav-item">
-                        <button class="nav-button" type="button">Profile</button>
+                        <button class="nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.profile', username=current_user.username)}}';">Profile</button>
                     </li>
                     <li class="nav-item">
                         <button class="nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.logout')}}';">Logout</button>

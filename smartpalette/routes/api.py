@@ -10,7 +10,8 @@ API_ENDPOINT = "/api/v1"
 @api.route(API_ENDPOINT + '/users/<string:username>', methods=['GET'])
 def get_user(username):
     user = models.User.query.filter_by(username=username).first_or_404()
-    return jsonify(username=user.username, images=user.images)
+    user_images = [str(img) for img in user.images]
+    return jsonify(username=user.username, images=user_images)
 
 @api.route(API_ENDPOINT + '/users/', methods=['POST'])
 def create_user():
@@ -22,6 +23,12 @@ def create_user():
         models.db.session.add(new_user)
         models.db.session.commit()
     return "Added user {}".format(data['username'])
+
+def get_image_object(filename):
+    return models.Image.query.filter_by(filepath=filename).first_or_404()
+
+def get_palette_object(id):
+    return models.Palette.query.filter_by(paletteId=id).first_or_404()
 
 @api.route(API_ENDPOINT + '/images/<string:filename>')
 def get_image(filename):
