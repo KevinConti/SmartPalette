@@ -33,10 +33,16 @@
                     <button class="nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.logout')}}';">Logout</button>
                 </div>
                 <div class="col-lg-9">
-                    <h2>Your created palettes </h2>
+                    <h2>Your uploaded images </h2>
                     <br>
 
-                    {{ images }}
+                    {% for i in images %}
+                        <a href="{{ url_for('blue_print.display', filename=i[1])}}">
+                        <img style="height: 300px" src="{{i[0]}}">
+                        </a>
+                        <br>
+                        <br>
+                    {% endfor %}
                 </div>
             </div>
         </div>

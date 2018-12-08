@@ -28,9 +28,11 @@
             {% else %}
             <h1>Error</h1>
             {% endif %}
-            <div class='palette-block'>
-
-
+            <br>
+            <br>
+            {% for hex in color_list %}
+                <div style="width: 100px;height: 100px;margin: 5px;display:inline-block;background-color: #{{ hex }}"></div>
+            {% endfor %}
 
             </div>
         </div>
