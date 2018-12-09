@@ -7,6 +7,10 @@ from PIL import Image
 
 class PaletteGenerator:
 
+    """This method reads every pixel of the image, and puts it into a list.
+    Then 3 random color points are made. The method iterates through categorizations
+    and update of color means until the mean stops changing. The final colors are returned"""
+
     @staticmethod
     def create_palette(image, num_of_colors):
         pixel_list = list(Image.open(image, 'r').getdata())
@@ -50,6 +54,11 @@ class PaletteGenerator:
 
         return color_list
 
+
+    """The categorize method takes the color mean points and calculates the distance from each of them
+    to every pixel. The shortest distance assigns that pixel to that color mean point. The average of
+    the assigned points are taken, and this becomes the new color mean point."""
+
     @staticmethod
     def categorize(x, y, z, xmeans, ymeans, zmeans):
         catlist = []
@@ -74,12 +83,22 @@ class PaletteGenerator:
 
         return catlist
 
+
+    """If a color mean point does not have any pixels assigned to it, it appends type None
+    to the mean list. This function eliminates the None values. This happens when the user input
+    a number of colors that is higher than possible to be generated in the image. (ex. a photo of
+    just blue could only generate blue)."""
+
     @staticmethod
     def eliminateNoneVals(element_list):
         for item in element_list:
             if item == None:
                 element_list.remove(item)
         return element_list
+
+
+    """Refining the mean involves calculating the average of all points assigned to each 
+    color mean point."""
 
     @staticmethod
     def refine_mean(palette_num, catlist, xlist, ylist, zlist, xmeans, ymeans, zmeans):
@@ -124,6 +143,7 @@ class PaletteGenerator:
                 newzmeans.append(None)
         return newxmeans, newymeans, newzmeans, change
 
+"""Main function generates a palette based on user input of image and color number"""
 
 def main():
     a = PaletteGenerator()

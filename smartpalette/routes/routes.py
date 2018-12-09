@@ -1,5 +1,5 @@
 from smartpalette.Algorithm.ColorPaletteGenerator import PaletteGenerator
-from smartpalette.models.models import User, Color
+from smartpalette.models.models import User, Color, Palette, db
 from flask import Flask, render_template, Blueprint, abort, jsonify, session
 from flask import request, flash, redirect, url_for, send_from_directory
 from flask_login import current_user, login_user, logout_user
@@ -59,9 +59,18 @@ def profile(username):
     username = username.lower()
     try:
         user = requests.get(request.url_root + API_ENDPOINT + "/users/{}".format(username)).json()
+        images = []
+        counter = 0
+        for i in reversed(user.get('images')):
+            counter += 1
+            image_in_directory = request.url_root + API_ENDPOINT + '/images/' + i
+            filename = image_in_directory.split('/images/')[1]
+            images.append((image_in_directory, filename))
+            if counter == 5:
+                break
     except ValueError:
         return 'Sorry, this user does not exist'
-    return render_template('profile.html', username=username.capitalize(), images=user.get('images'))
+    return render_template('profile.html', username=username.capitalize(), images=images)
 
 @blue_print.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -125,6 +134,11 @@ def upload():
                 new_palette.image = new_image
                 db.session.add(new_palette)
                 db.session.commit()
+
+                return redirect(url_for(
+                    'blue_print.display',
+                    filename=filename
+                ))
             else:
                 return redirect(url_for(
                         'blue_print.display',
@@ -138,7 +152,10 @@ def upload():
 @blue_print.route('/display/<string:filename>/', methods=['GET'])
 def display(filename):
     image = request.url_root + API_ENDPOINT + '/images/' + filename
-    return render_template('display.html', filename=image)
+    image_object = api.get_image_object(filename)
+    palette = api.get_palette_object(image_object.paletteId)
+    color_list = [c.hex for c in palette.colors]
+    return render_template('display.html', filename=image, color_list=color_list)
 
 @blue_print.route('/browse', methods=['GET', 'POST'])
 def browse():
@@ -157,8 +174,7 @@ def browse():
 
 def get_color_tuples(connection):
     result = connection.execute('SELECT DISTINCT p1."paletteId", p1.hex FROM palette_colors p1 '
-                                'INNER JOIN palette_colors p2 on p1."paletteId" = p2."paletteId" '
-                                'AND p1.hex <> p2.hex;');
+                                'INNER JOIN palette_colors p2 on p1."paletteId" = p2."paletteId" ');
 
     # Format the ResultQuery into a list of dictionaries
     paletteColors = []
@@ -191,13 +207,13 @@ def get_palettes_by_id(connection):
                'INNER JOIN image on palette."paletteId" = image."paletteId" '
                'INNER JOIN "user" on image.username = "user".username '
                'ORDER BY palette."paletteId";')
-    result = connection.execute(sql)
+    result = list(connection.execute(sql))
 
     palettesById = []
-    for row in result:
+    for row in reversed(result):
         thisdict = {
             "paletteId": row[0],
-            "filepath": row[1],
+            "filepath": request.url_root + API_ENDPOINT + '/images/' + row[1],
             "username": row[2],
         }
         palettesById.append(thisdict)
