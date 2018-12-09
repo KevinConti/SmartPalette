@@ -46,6 +46,10 @@ def create_app():
     def page_not_found(e):
         return render_template('404.html'), 404
 
+    @app.errorhandler(413)
+    def request_entity_too_large(e):
+        return render_template('413.html'), 413
+
     return app
 
 
@@ -56,6 +60,7 @@ def configure_app(app):
     # If "Development" then will attempt to find a local postgresql DB
     # Else will attempt to connect to prod
     app.config['SECRET_KEY'] = "abcitseasyas123"
+    app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024 # 1 Megabyte upload
     if (app.env == "development"):
         # If this doesn't work, go to psql shell and run "delete from alembic_version;"
         """

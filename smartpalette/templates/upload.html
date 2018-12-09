@@ -24,15 +24,14 @@
         <div class="mx-auto text-center">
             <h2 class="form-title">Upload Image</h2>
             <div class="text-center">
-
+                <div style="color:#FF0057;">
+                    {%- for category, message in get_flashed_messages(with_categories = true) %}
+                    {{ message }}
+                    {%- endfor %}
 
                 <br>
 
                 <img id="output"/>
-                <div style="color:#FF0057;">
-                {%- for category, message in get_flashed_messages(with_categories = true) %}
-                {{ message }}
-                {%- endfor %}
             </div>
                 <form method=post enctype=multipart/form-data>
                     <label for=color_num>How many colors would you like?</label><br>
