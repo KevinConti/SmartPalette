@@ -1,6 +1,23 @@
-<html>
-<body>
-    <p>Image uploaded was too large. Only upload images less than 1MB</p>
-    <button  type="button" onclick="window.location.href='{{ url_for('blue_print.upload')}}';">Upload</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <title>404</title>
+
+    <link rel="stylesheet" href="../static/css/styles.css">
+
+</head>
+<body style="background-image: none;">
+    <div class="error-outer">
+        <div class="error-container">
+            <img src="../static/imgs/gif.gif" style="height: 150px; width:auto;">
+            <p>Image uploaded was too large. Only upload images less than 1MB</p>
+        <button  type="button" onclick="window.location.href='{{ url_for('blue_print.upload')}}';">Upload</button>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,33 +1,4 @@
 
-
-    //Upload image modal -- Saves selected variables and ¿Image Data?
-   $('#image-info').click(function() {
-      var image_data = readFile();
-      var color_number = $('#paletteNumberSelect').val();
-   });
-
-
-   //Grab username and password inputs -- Create account modal
-   $('#create-account').click(function() {
-      var username = $('#new_username').val();
-      var password = $('#new_password').val();
-   });
-
-
-    //Grab username and password inputs -- Login modal
-   $('#login-account').click(function() {
-       var username = $('#username').val();
-       var password = $('#password').val();
-   });
-
-
-
-    $('#image-info').click(function() {
-        var image_data = readFile();
-        var color_number = $('#paletteNumberSelect').val();
-    });
-
-
     //Initiates preview of palette with options
     $('#generateButton').click(function (evt) {
         evt.preventDefault();
