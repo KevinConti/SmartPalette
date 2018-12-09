@@ -31,7 +31,6 @@
                      <img style="height: 300px" src="{{row["filepath"]}}">
                         <br>
                      <h2>Uploaded by: {{ row["username"] }}</h2>
-                    <a class="" style="text-decoration: underline; font-size: 12px; color: #fff;" href="{{ url_for('blue_print.register') }}">Don't have an account?</a>
 
                      {#<p>Palette ID: {{ row["paletteId"] }}</p>
                      <p>filepath: {{ row["filepath"] }}</p>#}
@@ -43,7 +42,6 @@
                         <p>{{  hex }}</p>
                     </div>
                 </div>
-              </div>
             <br>
           {%  endfor %}
         {% else %}
