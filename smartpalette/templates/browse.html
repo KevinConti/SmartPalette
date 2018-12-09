@@ -23,28 +23,36 @@
     <div class="container d-flex h-100 align-items-center">
         <div class="mx-auto text-center">
         <h2>All user uploaded palettes</h2>
+        <br>
             {% if palettesById %}
           {% for row in palettesById %}
-              <img style="height: 300px" src="{{row["filepath"]}}">
-              <p>paletteId: {{ row["paletteId"] }}</p>
-              <p>username: {{ row["username"] }}</p>
-              <p>filepath: {{ row["filepath"] }}</p>
-              <p>hex values:</p>
-            {% for hex in paletteColors[row["paletteId"]] %}
+              <div class="row">
+                <div class="col-lg-12"shadow-lg p-3 mb-5 bg-dark rounded>
+                     <img style="height: 300px" src="{{row["filepath"]}}">
+                     <h2>Uploaded by {{ row["username"] }}</h2>
+                     <p>Palette ID: {{ row["paletteId"] }}</p>
+                     <p>filepath: {{ row["filepath"] }}</p>
+                    <p>hex values:</p>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            {% for hex in paletteColors[row["paletteId"]] %}
                 <div style="width: 100px;height: 100px;margin: 5px;display:inline-block;background-color: #{{ hex }}"></div>
               {% endfor %}
+                        <p>{{  hex }}</p>
+                        </div>
+                    </div>
+                </div>
+              </div>
             <br>
           {%  endfor %}
         {% else %}
-          <h2>Unable to find any palettes</h2>
+          <h2>Unable to find any palettes! Try adding some of your own today!</h2>
+                <button class="button uploadButton" onclick="window.location.href='{{ url_for('blue_print.upload')}}';" style="cursor: pointer;">Upload Image</button>
         {% endif %}
         </div>
     </div>
 </div>
-
 <!-- End Content -->
-
-
 
 <!-- Bootstrap core JavaScript -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

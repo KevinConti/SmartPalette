@@ -28,27 +28,29 @@
                 <div class="col-lg-3">
                     <h2> Welcome </h2>
                     <p>{{ username }}</p>
-                    <button class="nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.browse')}}';">Gallery</button>
-                    <button class="nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.upload')}}';">Upload</button>
-                    <button class="nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.logout')}}';">Logout</button>
+                    <button class="profile-button nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.browse')}}';">Gallery</button>
+                    <button class="profile-button nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.upload')}}';">Upload</button>
+                    <button class="profile-button nav-button" type="button" onclick="window.location.href='{{ url_for('blue_print.logout')}}';">Logout</button>
                 </div>
                 <div class="col-lg-9">
                     <h2>Your uploaded images </h2>
                     <br>
-
                     {% for i in images %}
-                        <a href="{{ url_for('blue_print.display', filename=i[1])}}">
-                        <img style="height: 300px" src="{{i[0]}}">
-                        </a>
-                        <br>
-                        <br>
+                        <div class = "row">
+                            <div class = "col-lg-6 " align="center">
+                                <a href="{{ url_for('blue_print.display', filename=i[1])}}">
+                                <img class="shadow-lg p-3 mb-5 bg-dark rounded" style="width: 250px; height:auto;" src="{{i[0]}}">
+                                </a>
+                                <br>
+                                <br>
+                            </div>
                     {% endfor %}
+                        </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <!-- End Content -->
 
 
@@ -56,6 +58,5 @@
 <!-- Bootstrap core JavaScript -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
 </body>
 </html>

@@ -47,6 +47,7 @@ def register():
             if r.status_code == 409:
                 flash("User already exists, please try again.")
             else:
+                session['logged_in'] = True
                 return redirect(url_for(
                         'blue_print.profile', 
                         username=request.form['username']
