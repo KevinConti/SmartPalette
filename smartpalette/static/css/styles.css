@@ -1,4 +1,5 @@
 
+/*body uses fixed svg background*/
 body {
     background-image: url("../imgs/background-test.svg");
     background-repeat: no-repeat;
@@ -7,6 +8,7 @@ body {
     background-size: cover;
 }
 
+/*Navbar - Start */
 #mainNav {
     padding-top: 5px;
     padding-bottom: 5px;
@@ -26,21 +28,18 @@ body {
     -o-transition: .3s;
     transition: .3s;
 }
-
 .nav-button:hover {
     border-bottom: 3px solid #fff;
 }
+/*Navbar -- End */
 
+/*Shared content styles */
 .main-content {
     position: relative;
     width: 100%;
     height: auto;
     min-height: 35rem;
-    padding: 15rem 0;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    background-size: cover;
+    padding-top: 8em;
 }
 .main-content h2, p {
     color: #fff;
@@ -70,13 +69,17 @@ input[type=button], input[type=submit], input[type=reset], .button {
 input[type=submit]:hover, .button:hover{
     box-shadow: inset 0px 0px 0px 0px #fff;
 }
+/*Shared content -- END */
 
+/*Profile buttons */
+.profile-button {
+    border-right: 3px #f7f7f7 solid ;
+}
 #output {
     height:240px;
     width: auto;
     padding-bottom: 20px;
 }
-
 label {
     color: #fff;
 }
@@ -89,4 +92,20 @@ label {
 /* Remove button blue-line */
 button:focus {
     outline:0;
+}
+
+/*Error pages formatting */  .
+
+
+
+.error-outer {
+    position: relative;
+}
+.error-container {
+    padding: 15px 25px;
+    width: 100%;
+    max-width: 300px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;top: 50%;
 }
