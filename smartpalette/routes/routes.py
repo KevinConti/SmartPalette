@@ -22,8 +22,17 @@ GENERATOR = PaletteGenerator()
 blue_print = Blueprint('blue_print', __name__, template_folder='templates')
 
 def allowed_file(filename):
+    """
+    Ensures that the user can only upload files with the ALLOWED_EXTENSIONS
+    """
     return '.' in filename \
         and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def is_valid_num_of_colors(num_of_colors):
+    """
+    Ensures that the user can only enter in integers 1-10
+    """
+    return (num_of_colors.isdigit() and 0 < int(num_of_colors) <= 10)
 
 @blue_print.route('/register/', methods=['GET', 'POST'])
 def register():
@@ -57,36 +66,61 @@ def register():
 
 @blue_print.route('/profile/<string:username>', methods=['GET'])
 def profile(username):
+    """
+    This route displays the user's information:
+        - Their name
+        - Uploaded images
+    """
     username = username.lower()
     try:
+        # Send a GET request to the api/v1/users/username route to receive a JSON response back
         user = requests.get(request.url_root + API_ENDPOINT + "/users/{}".format(username)).json()
         images = []
         counter = 0
+
+        # Displays the top 5 images in the user's profile
         for i in reversed(user.get('images')):
             counter += 1
+
+            # Grabs the image from the directory via the api/v1/images/imagename route
             image_in_directory = request.url_root + API_ENDPOINT + '/images/' + i
+
+            # Splits the full url to only include the image filename
             filename = image_in_directory.split('/images/')[1]
             images.append((image_in_directory, filename))
             if counter == 5:
                 break
     except ValueError:
+        # Error Handling: If the user doesn't exist, return a 404
         return 'Sorry, this user does not exist'
     return render_template('profile.html', username=username.capitalize(), images=images)
 
 @blue_print.route('/login/', methods=['GET', 'POST'])
 def login():
+    """
+    This route contains two text fields that allow for data entry:
+        - Username field
+        - Password field
+    """
     if current_user.is_authenticated:
+        # Error Handling: If the user is already logged in, redirect to the homepage
         return redirect(url_for('index'))
     if request.method == 'POST':
+        # Error HandlingL Ensure that the user enters in values in both fields
         if not request.form.get('username') or not request.form.get('password'):
             flash("Error: Please enter your username and password")
         else:
+            # Retrieves the username typed into the username field
             user_name = request.form['username'].lower()
+
+            # Queries the database in order to find the user
             user = User.query.filter_by(username=user_name).first()
+
+            # If either the username or password is incorrect, present an error
             if user is None or not user.check_password(request.form['password']):
                 flash('Error: Invalid username or password')
-                return redirect(url_for('blue_print.login'))
             else:
+                # Sets the session to logged in, from the flask-login library
                 session['logged_in'] = True
                 login_user(user)
                 return redirect(url_for('index'))
@@ -94,6 +128,9 @@ def login():
 
 @blue_print.route('/logout/')
 def logout():
+    """
+    This route will logout the current authenticated user
+    """
     session['logged_in'] = False
     if current_user.is_authenticated:
         logout_user()
@@ -103,58 +140,82 @@ def logout():
 
 @blue_print.route('/upload/', methods=['GET', 'POST'])
 def upload():
+    """
+    This route contains an upload option and a number of colors input.
+    It will create multiple entries in the data base depending on what the user
+    wants:
+        - Image
+        - Palette
+        - Colors
+    """
     if request.method == 'POST':
-        image = request.files.get('file')
+        # Verify user is authenticated
+        if current_user.is_authenticated:
+            image = request.files.get('file')
+            num_of_colors = request.form.get('color_num')
+            
+            # Error Handling: Verify that the user enters in a valid number
+            if is_valid_num_of_colors(num_of_colors):
+                num_of_colors = int(num_of_colors)
+                
+                # Error Handling: Verify that the user selected a proper image
+                if image == None:
+                    flash('Invalid input. Please upload a proper image type and number of colors.')
+                elif image and allowed_file(image.filename):
+                    # Generates a unique ID for the image-- ie. to allow for images to be uploaded mulitple times
+                    filename = secure_filename(str(uuid4()))
+                    image.save(
+                        os.path.join(
+                            app.config['UPLOAD_FOLDER'],
+                            filename
+                        )
+                    )
+                    
+                    # Generates the palette using the algorithm
+                    color_list = GENERATOR.create_palette(image, num_of_colors)
 
-        # Error handling needs to exist for num_of_colors != alphacharacters, 0, < 10, etc.
-        num_of_colors = int(request.form.get('color_num'))
-        if image == None:
-            flash('Invalid input. Please upload a proper image type and number of colors.')
-        elif image and allowed_file(image.filename):
-            filename = secure_filename(str(uuid4()))
-            image.save(
-                os.path.join(
-                    app.config['UPLOAD_FOLDER'],
-                    filename
-                )
-            )
-
-            color_list = GENERATOR.create_palette(image, num_of_colors)
-
-            if current_user.is_authenticated:
-                new_image = api.create_image({"filename":filename, "username":current_user.username})
-                new_palette = Palette(new_image)
-                rgb_colors = {}
-                for i in color_list:
+                    # Creates a new image by sending the info to a function in api
+                    new_image = api.create_image({"filename":filename, "username":current_user.username})
+                    new_palette = Palette(new_image)
                     rgb_colors = {}
-                    rgb_colors['r'] = i[0]
-                    rgb_colors['g'] = i[1]
-                    rgb_colors['b'] = i[2]
-                    new_color = api.create_color(rgb_colors)
-                    new_palette.colors.append(new_color)
-                new_palette.image = new_image
-                db.session.add(new_palette)
-                db.session.commit()
 
-                return redirect(url_for(
-                    'blue_print.display',
-                    filename=filename
-                ))
-            else:
-                return redirect(url_for(
+                    # Create a new database color with each color from the algorithm
+                    for i in color_list:
+                        rgb_colors = {}
+                        rgb_colors['r'] = i[0]
+                        rgb_colors['g'] = i[1]
+                        rgb_colors['b'] = i[2]
+                        new_color = api.create_color(rgb_colors)
+                        # Append the color to the newly created palette (for foreign key reference)
+                        new_palette.colors.append(new_color)
+                    new_palette.image = new_image
+                    db.session.add(new_palette)
+                    db.session.commit()
+
+                    return redirect(url_for(
                         'blue_print.display',
                         filename=filename
-                    )
-                )
+                    ))
+                else:
+                    flash('Only upload png, jpeg, jpg, and tif.')
+            else:
+                flash('Only enter a number 1 - 10')
         else:
-            flash('Only upload png, jpeg, jpg, and tif.')
+            flash('Only logged in users can perform this action')
+            
     return render_template('upload.html')
 
 @blue_print.route('/display/<string:filename>/', methods=['GET'])
 def display(filename):
+    """
+    This route displays the image with its respective palette colors
+    """
+    # Grab image
     image = request.url_root + API_ENDPOINT + '/images/' + filename
     image_object = api.get_image_object(filename)
+    # Grab he palette id
     palette = api.get_palette_object(image_object.paletteId)
+    # Grab the hex vaue for each color in the palette
     color_list = [c.hex for c in palette.colors]
     return render_template('display.html', filename=image, color_list=color_list)
 
