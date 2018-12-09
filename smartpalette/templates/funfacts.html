@@ -1,24 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Browse</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <title>Gallery</title>
+
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <!-- Custom CSS and JS -->
     <script src="../static/js/script.js"></script>
     <link rel="stylesheet" href="../static/css/styles.css">
+
 </head>
 <body>
-    {%  include 'navbar.html' %}
-    <h1>Fun Facts about Smartpalette!</h1>
-    <ul>
-        <li><p>SmartPalette has {{ numUsers }} users who have signed up!</p></li>
-        <li><p>There are {{ powerUsers|length }} "power users", which are users who have uploaded five or more palettes!</p></li>
-        <li><p>There are {{ numAwesome }} images that have the word "awesome" in their filepath!</p></li>
-        <li><p>There are {{ numPalettes }} user-generated palettes!</p></li>
-        <li><p>This page has been visited {{ visited }} times! (hit refresh to see this go up)</p></li>
-    </ul>
+
+{% include 'navbar.html' %}
+<!-- Content -->
+<div class="main-content">
+    <div class="container d-flex h-100 align-items-center">
+        <div class="mx-auto text-center">
+            <ul>
+                <h2>Fun facts about Smart Palette!</h2>
+                <br>
+                <br>
+                <li><p>SmartPalette has {{ numUsers }} users who have signed up!</p></li>
+                <li><p>There are {{ powerUsers|length }} "power users", which are users who have uploaded five or more
+                    palettes!</p></li>
+                <li><p>There are {{ numAwesome }} images that have the word "awesome" in their filepath!</p></li>
+                <li><p>There are {{ numPalettes }} user-generated palettes!</p></li>
+                <li><p>This page has been visited {{ visited }} times! (hit refresh to see this go up)</p></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- End Content -->
+
+<!-- Bootstrap core JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 
 </body>
 </html>

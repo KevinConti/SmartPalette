@@ -9,7 +9,8 @@
     <title>Smart Palette</title>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <!-- Custom CSS and JS -->
     <script src="../static/js/script.js"></script>
     <link rel="stylesheet" href="../static/css/styles.css">
@@ -17,7 +18,7 @@
 </head>
 <body>
 
-{%  include 'navbar.html' %}
+{% include 'navbar.html' %}
 <!-- Content -->
 <div class="main-content">
 
@@ -27,13 +28,13 @@
 
             <h2>Create your custom palettes with the click of a button.</h2>
             <p>Its easy! Upload your image, select how many colors your would like to generate,
-                and boom.  <br>
+                and boom. <br>
                 Be sure to create an account to share and view others creations.</p>
-
             <br>
-
-                <button class="button uploadButton" onclick="window.location.href='{{ url_for('blue_print.upload')}}';" style="cursor: pointer;">Upload Image</button>
-                <button class="button" data-toggle="modal" data-target="#showExample">View Example</button>
+            <button class="button uploadButton" onclick="window.location.href='{{ url_for('blue_print.upload') }}';"
+                    style="cursor: pointer;">Upload Image
+            </button>
+            <button class="button" data-toggle="modal" data-target="#showExample">View Example</button>
             <br>
         </div>
     </div>
@@ -42,10 +43,11 @@
 <!-- End Content -->
 
 
-
 <!-- Bootstrap core JavaScript -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 
 </body>
 </html>
@@ -60,8 +62,12 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body text-center">
-                <img class="img-fluid mb-5 d-block mx-auto" src="../static/imgs/RainbowPalette.png" style="height: auto; width: 450px; text-align:center; margin-bottom: 20px;">
-                <button class="button" onclick="window.location.href='{{ url_for('blue_print.upload')}}';" style="cursor: pointer;  text-align:center; color:#000; box-shadow: inset 0px 0px 0px 3px #000000;">Try Yourself</button>
+                <img class="img-fluid mb-5 d-block mx-auto" src="../static/imgs/RainbowPalette.png"
+                     style="height: auto; width: 450px; text-align:center; margin-bottom: 20px;">
+                <button class="button" onclick="window.location.href='{{ url_for('blue_print.upload') }}';"
+                        style="cursor: pointer;  text-align:center; color:#000; box-shadow: inset 0px 0px 0px 3px #000000;">
+                    Try Yourself
+                </button>
             </div>
         </div>
     </div>
