@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <title>Smart Palette - Upload</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <!-- Custom CSS and JS -->
+    <script src="../static/js/script.js"></script>
+    <link rel="stylesheet" href="../static/css/styles.css">
+
+</head>
+<body>
+{% include 'navbar.html' %}
+<!-- Content -->
+<div class="main-content">
+    <div class="container d-flex h-100 align-items-center">
+        <div class="mx-auto text-center">
+            <h2 class="form-title">Upload Image</h2>
+            <div class="text-center">
+                <div style="color:#FF0057;">
+                    {%- for category, message in get_flashed_messages(with_categories = true) %}
+                        {{ message }}
+                    {%- endfor %}
+
+                    <br>
+
+                    <img id="output"/>
+                </div>
+                <form method=post enctype=multipart/form-data>
+                    <label for=color_num>How many colors would you like?</label><br>
+                    <input id="#paletteNumberSelect" type=text name=color_num><br><br>
+                    <!-- Added readFile to display image as a preview client-side-->
+                    <input style="color: #fff;" type=file name=file onchange="readFile()">
+                    <br>
+                    <br>
+                    <input id="#generateButton" type=submit value=Upload>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- End Content -->
+
+</div>
+
+<!-- Bootstrap core JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+</html>

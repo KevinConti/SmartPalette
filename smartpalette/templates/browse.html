@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <title>Gallery</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Custom CSS and JS -->
+    <script src="../static/js/script.js"></script>
+    <link rel="stylesheet" href="../static/css/styles.css">
+
+</head>
+<body>
+
+{% include 'navbar.html' %}
+<!-- Content -->
+<div class="main-content">
+    <div class="container d-flex h-100 align-items-center">
+        <div class="mx-auto text-center">
+            <h2>All user uploaded palettes</h2>
+            <br>
+            {% if palettesById %}
+                {% for row in palettesById %}
+                    <div class="row">
+                        <div class="col-lg-12 shadow-lg p-3 mb-5 bg-dark rounded">
+                            <img style="height: 300px" src="{{ row["filepath"] }}">
+                            <br>
+                            <h2>Uploaded by: {{ row["username"] }}</h2>
+
+                            {#<p>Palette ID: {{ row["paletteId"] }}</p>
+                     <p>filepath: {{ row["filepath"] }}</p>#}
+
+                            <p>Generated colors (hex values):</p>
+                            {% for hex in paletteColors[row["paletteId"]] %}
+                                <div style="width: 100px;height: 100px;margin: 5px;display:inline-block;background-color: #{{ hex }}">
+                                    <p>{{ hex }}</p></div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br>
+                {% endfor %}
+            {% else %}
+                <h2>Unable to find any palettes! Try adding some of your own today!</h2>
+                <button class="button uploadButton" onclick="window.location.href='{{ url_for('blue_print.upload') }}';"
+                        style="cursor: pointer;">Upload Image
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<!-- End Content -->
+
+<!-- Bootstrap core JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>

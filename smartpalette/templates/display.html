@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <title>Smart Palette - Upload</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Custom CSS and JS -->
+    <script src="../static/js/script.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+{% include 'navbar.html' %}
+<!-- Content -->
+<div class="main-content">
+    <div class="container d-flex h-100 align-items-center">
+        <div class="mx-auto text-center">
+            <h2 class="form-title">Your Result</h2>
+            <hr class="star-light">
+            {% if filename %}
+                <img style="width: 400px; height:auto;" src="{{ filename }}">
+            {% else %}
+                <h1>Error</h1>
+            {% endif %}
+            <br>
+            <br>
+            {% for hex in color_list %}
+                <div style="width: 100px;height: 100px;margin: 5px;display:inline-block;background-color: #{{ hex }}">
+                    <p>{{ hex }}</p></div>
+            {% endfor %}
+            <br>
+            <button class="button uploadButton" onclick="window.location.href='{{ url_for('blue_print.browse') }}';"
+                    style="cursor: pointer;">View in Gallery
+            </button>
+            <button class="button uploadButton" onclick="window.location.href='{{ url_for('blue_print.upload') }}';"
+                    style="cursor: pointer;">Make Another
+            </button>
+        </div>
+
+    </div>
+</div>
+</div>
+<!-- End Content -->
+
+<!-- Bootstrap core JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
